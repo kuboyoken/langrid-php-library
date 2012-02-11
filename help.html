@@ -1,0 +1,154 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link href="main.css" rel="stylesheet" type="text/css" />
+    <title>多言語工房ヘルプ</title>
+</head>
+<body>
+<div class="wrapper">
+	<div class="header">
+		<h1 class="title">多言語工房ヘルプ</h1>
+	</div>
+
+	<div class="section">
+		<h2>TOC</h2>
+		＃ TODO 目次を記入
+		<ul id="" class="">
+			<li><a href="#summary">概要</a></li>
+			<li><a href="#quickstart">クイックスタート</a></li>
+		</ul><!-- / -->
+		<p>
+		</p>
+	</div><!-- /.section -->
+
+	<div class="section" id="summary">
+		<h2>概要</h2>
+		<p>
+		＃ TODO 多言語工房に全体に関する説明、ライセンス等を記入
+		</p>
+	</div><!-- /.section -->
+
+	<div class="section" id="quickstart">
+		<h2>クイックスタート</h2>
+		<p>
+		# TODO 利用方法を記入　サンプルとして３サービス分の実装コードスニペットを記入
+		</p>
+
+		<strong>TranslationWithTemporalDictionaryサービスの利用</strong>
+		<pre>
+			
+		</pre>
+		<br>
+
+		<strong>TextToSpeechサービスの利用</strong>
+		<pre>
+			
+		</pre>
+		<br>
+
+		<strong>BilingualDictionaryサービスの利用</strong>
+		<pre>
+			
+		</pre>
+	</div><!-- /.section -->
+
+	<div class="section">
+		<h2>サービスグリッドAPI</h2>
+		<p>
+		</p>
+
+		<div class="section">
+			<h3>サービス共通</h3>		
+			<p>
+			</p>
+			<pre>
+				
+			</pre>
+		</div><!-- /.section -->
+
+
+		<div class="section">
+			<h3>AdjacencyPairClient</h3>
+			<p>隣接応答対サービスのクライアントが実装するインターフェース。</p>
+
+			<h4>search</h4>
+			<p>
+				<b>パラメータ</b> 
+				<ul class="parameters">
+					<li><code>(string) category</code> - カテゴリ</li>
+					<li><code>(string) language</code> - 発話の言語（RFC3066準拠．prefixのみ一致した場合は，一致した言語が1つの場合のみ呼び出し可能（例：対応言語にzh-Hansがあったときに，languageにzhを指定した場合））</li>
+					<li><code>(string) firstTurn</code> - 発話（必須）</li>
+					<li><code>(const MatchingMethod) matchingMethod</code> - 検索方法（"COMPLETE"，"PREFIX"，"SUFFIX"，"PARTIAL"，"REGEX"のいずれか）（必須）</li>
+				</ul><!-- / -->
+
+				<b>戻り値</b>
+				<ul class="responses">
+					<li><code>category</code> - カテゴリ</li>
+					<li><code>firstTurn</code> - 発話</li>
+					<li><code>secondTurns</code> - 発話に対する応答の配列</li>
+				</ul><!-- / -->
+				<span>[例]</span>
+				<pre>
+.array(2) {
+  [0]=>
+  object(stdClass)#207 (3) {
+    ["category"]=>
+    string(7) "Payment"
+    ["firstTurn"]=>
+    string(23) "test/examination charge"
+    ["secondTurns"]=>
+    array(1) {
+      [0]=>
+      string(98) "charges for specimen tests, ie.blood, urine etc. and physical examinations ie. ECG, endoscopy etc."
+    }
+  }
+  [1]=>
+  object(stdClass)#205 (3) {
+    ["category"]=>
+    string(7) "account"
+    ["firstTurn"]=>
+    string(23) "test/examination charge"
+    ["secondTurns"]=>
+    array(1) {
+      [0]=>
+      string(100) "charges for specimen tests ie.blood, urine etc. and physical examinations ie.EKG/ECG, endoscopy etc."
+    }
+  }
+}
+				</pre>
+			</p>
+		</div><!-- /.section -->
+	</div><!-- /.section -->
+
+	<div class="section">
+		<h2>ローカルサービスAPI</h2>
+
+		<div class="section">
+			<h3>概要</h3>
+			<p>
+			</p>
+		</div><!-- /.section -->
+
+		<div class="section">
+			<h3>ローカル辞書</h3>
+			<p>
+			</p>
+		</div><!-- /.section -->
+
+		<div class="section">
+			<h3>ローカル用例対訳</h3>
+			<p>
+			</p>
+		</div><!-- /.section -->
+		
+	</div><!-- /.section -->
+
+    <ul>
+        <li></li>
+    </ul>
+		
+</div><!-- /.wrapper -->
+</body>
+</html>
