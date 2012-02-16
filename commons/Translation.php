@@ -14,7 +14,7 @@ class Translation
     // Array<String> 対訳の配列
     private $targetWords;
 
-    function __construct(/*String*/ $headWord = '', /*Array<String>*/ $targetWords = array()){
+    function __construct(/*String*/ $headWord = '', array/*<String>*/ $targetWords = array()){
         $this->setHeadWord($headWord);
         $this->setTargetWords($targetWords);
     }

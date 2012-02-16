@@ -14,4 +14,6 @@ require_once dirname(__FILE__).'/commons/Speech.php';
 require_once dirname(__FILE__).'/commons/BoundChoiceParameter.php';
 require_once dirname(__FILE__).'/commons/BoundValueParameter.php';
 require_once dirname(__FILE__).'/commons/BindingNode.php';
+require_once dirname(__FILE__).'/commons/LangridException.php';
+
 

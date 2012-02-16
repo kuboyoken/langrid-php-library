@@ -102,6 +102,11 @@ abstract class ServiceClientImpl implements ServiceClient
         $this->lastName = @$headers[self::HTTPHEADER_SERVICE_NAME];
         $this->lastCopyright = @$headers[self::HTTPHEADER_SERVICE_COPYRIGHT];
         $this->lastLicense = @$headers[self::HTTPHEADER_SERVICE_LICENSE];
+
+        if($result instanceof SoapFault) {
+            throw new LangridException($result->getMessage(), $this->url, $methodName, $arguments, $result);
+        }
+
         return $result;
     }
 

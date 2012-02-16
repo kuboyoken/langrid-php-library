@@ -4,12 +4,12 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link href="main.css" rel="stylesheet" type="text/css" />
-    <title>多言語工房ヘルプ</title>
+    <title>多言語工房 PHPライブラリヘルプ</title>
 </head>
 <body>
 <div class="wrapper">
 	<div class="header">
-		<h1 class="title">多言語工房ヘルプ</h1>
+		<h1 class="title">多言語工房 PHPライブラリヘルプ</h1>
 	</div>
 
 	<div class="section">
@@ -32,26 +32,56 @@
 
 	<div class="section" id="quickstart">
 		<h2>クイックスタート</h2>
-		<p>
+
 		# TODO 利用方法を記入　サンプルとして３サービス分の実装コードスニペットを記入
+		<p>
+			<strong>TranslationWithTemporalDictionaryサービスの利用</strong>
+			<pre>
+$url = 'http://langrid.nict.go.jp/service_manager/wsdl/kyotou.langrid:TranslationCombinedWithBilingualDictionary';
+
+try{
+    // サービスクライアントの作成
+    $this->client = ClientFactory::createTranslationWithTemporalDictionaryClient($url);
+
+    // サービス認証情報の設定（サービス全体でデフォルトの認証を利用する場合は省略できます。[後述]）
+    $this->client->setUserId('someUserId');
+    $this->client->setPassword('somePassword');	
+
+    // バインディングサービスの設定
+    $this->client->addBindings(new BindingNode("BilingualDictionaryPL", "KyotoTourismDictionaryDb"));
+    $this->client->addBindings(new BindingNode("TranslationPL", "GoogleTranslate"));
+
+
+    // サービスの呼び出し
+    $result = $this->client->translate(
+        Language::get('ja'),
+        Language::get('en'),
+        '京都の比叡山を含む東山は東山３６峰とも呼ばれています．',
+        array(
+            new Translation('東山３６峰', array('HIGASHIYAMA36HOU'))
+        ),
+        Language::get('en'));
+
+    var_dump($result); 
+    // -> Hiei in Kyoto Higashiyama, including is also known as the HIGASHIYAMA36HOU .
+} catch(Exception $e) {
+    var_dump($e);
+}</pre>
 		</p>
 
-		<strong>TranslationWithTemporalDictionaryサービスの利用</strong>
-		<pre>
-			
-		</pre>
-		<br>
+		<p>
+			<strong>TextToSpeechサービスの利用</strong>
+			<pre>
+				
+			</pre>
+		</p>
 
-		<strong>TextToSpeechサービスの利用</strong>
-		<pre>
-			
-		</pre>
-		<br>
-
-		<strong>BilingualDictionaryサービスの利用</strong>
-		<pre>
-			
-		</pre>
+		<p>
+			<strong>BilingualDictionaryサービスの利用</strong>
+			<pre>
+				
+			</pre>
+		</p>
 	</div><!-- /.section -->
 
 	<div class="section">
@@ -60,12 +90,44 @@
 		</p>
 
 		<div class="section">
-			<h3>サービス共通</h3>		
+			<h3>サービス共通</h3>
 			<p>
+				<h4>認証情報の指定</h4>
+				認証情報の指定は2種類の方法でできます。
+				<ul>
+					<li>サービス共通のデフォルト認証情報の指定</li>
+					<li>サービス固有の認証情報の指定</li>
+				</ul>
+
+				<br>
+				<strong>サービス共通のデフォルト認証情報の指定</strong>は以下のようなコードをアプリケーションの設定ファイルなどで一度だけ記入しサービス実行までに読み込んでおくことでサービス実行時に毎回ID及びパスワードの指定が不要になります。
+				通常はこちらの方法で利用します。			
+				<pre>
+ClientFactory::setDefaultUserId('someUserId');
+ClientFactory::setDefaultPassword('somePassword');</pre>
+
+				<br>
+				<strong>サービス固有の認証情報の指定</strong>はサービスクライアント作成時に個別にID及びパスワードを指定します。
+				サービスグリッドのサーバーがサービス毎に異なるなどの場合に利用します。
+				<pre>
+$client = ClientFactory::createTranslationClient('サービスURL');
+$client->setUserId('someUserId');
+$client->setUserId('somePassword');</pre>
+
+
+				<h4>SOAP呼び出し失敗時の例外</h4>
+				<p>
+					認証エラーなどSOAP呼び出しに失敗するとLangridException(標準のException派生クラス)例外が発生します。
+					クライアントを利用する場合は必ずtry ~ catch構文を使い例外を補足してください。
+					<pre>
+try {
+    $client = ClientFactory::createBilingualDictionaryClient('サービスURL');
+    $client->getSupportedLanguagePairs();
+} catch(LangridException $e) {
+    // 何らかのエラー処理
+}</pre>
+				</p>
 			</p>
-			<pre>
-				
-			</pre>
 		</div><!-- /.section -->
 
 
@@ -89,7 +151,7 @@
 					<li><code>firstTurn</code> - 発話</li>
 					<li><code>secondTurns</code> - 発話に対する応答の配列</li>
 				</ul><!-- / -->
-				<span>[例]</span>
+				<span>[実行結果の例]</span>
 				<pre>
 .array(2) {
   [0]=>
