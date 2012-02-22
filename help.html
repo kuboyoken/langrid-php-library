@@ -18,6 +18,13 @@
 		<ul id="" class="">
 			<li><a href="#summary">概要</a></li>
 			<li><a href="#quickstart">クイックスタート</a></li>
+			<li>
+				<a href="#servicegridapi">サービスグリッドAPI</a>
+				<ul>
+					<li><a href="#adjacencypairclient">AdjacencyPairClient</a></li>
+				</ul><!-- / -->
+			</li>
+			<li><a href="#localserviceapi">ローカルサービスAPI</a></li>
 		</ul><!-- / -->
 		<p>
 		</p>
@@ -32,8 +39,27 @@
 
 	<div class="section" id="quickstart">
 		<h2>クイックスタート</h2>
-
 		# TODO 利用方法を記入　サンプルとして３サービス分の実装コードスニペットを記入
+
+		<p>
+			<strong>多言語工房ライブラリをインポート</strong><br>
+			各クライアントを利用するためにはライブラリのインポートが必要です。
+			インポートはライブラリのルートディレクトリにある「MultiLanguageStudio.php」をインポートしてください。
+			次のような構造でライブラリを配置した場合、下記に示すコードでインポートが可能です。
+			<pre>	
+アプリケーションルート
+|- yourfile.php [サービスを利用するphpスクリプト]
+|- langrid-php-library [ライブラリのルート]
+	|- MultiLanguageStudio.php
+	|- client
+	|- config
+	|- ・・・</pre>
+			<pre>
+// yourfile.phpの先頭で以下を記述
+require_once dirname(__FILE__).'/langrid-php-library/MultiLanguageStudio.php';</pre>
+		</p>
+
+		<br>
 		<p>
 			<strong>TranslationWithTemporalDictionaryサービスの利用</strong>
 			<pre>
@@ -84,7 +110,7 @@ try{
 		</p>
 	</div><!-- /.section -->
 
-	<div class="section">
+	<div class="section" id="servicegridapi">
 		<h2>サービスグリッドAPI</h2>
 		<p>
 		</p>
@@ -131,7 +157,7 @@ try {
 		</div><!-- /.section -->
 
 
-		<div class="section">
+		<div class="section" id="adjacencypairclient">
 			<h3>AdjacencyPairClient</h3>
 			<p>隣接応答対サービスのクライアントが実装するインターフェース。</p>
 
@@ -184,7 +210,7 @@ try {
 		</div><!-- /.section -->
 	</div><!-- /.section -->
 
-	<div class="section">
+	<div class="section" id="localserviceapi">
 		<h2>ローカルサービスAPI</h2>
 
 		<div class="section">
