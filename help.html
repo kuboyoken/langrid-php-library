@@ -35,6 +35,9 @@
 		<p>
 		＃ TODO 多言語工房に全体に関する説明、ライセンス等を記入
 		</p>
+		<p>
+		多言語工房は、折り返し翻訳、発音再生、多重翻訳などさまざまな言語に関する機能群を統合し、クラウド上で利用できるようにしたAPI群です。多言語工房PHPライブラリはそれらのAPI(SOAP)をラップしてPHPから簡単に呼び出せるようにしたライブラリです。
+		</p>
 	</div><!-- /.section -->
 
 	<div class="section" id="quickstart">
@@ -56,30 +59,36 @@
 	|- ・・・</pre>
 			<pre>
 // yourfile.phpの先頭で以下を記述
-require_once dirname(__FILE__).'/langrid-php-library/MultiLanguageStudio.php';</pre>
-		</p>
+&lt;?
+require_once dirname(__FILE__).'/langrid-php-library/MultiLanguageStudio.php';
 
-		<br>
+...ここにコードを記述...
+?&gt;
+		</pre>
+		
+		<h3>TranslationWithTemporalDictionaryサービスの利用</h3>
+		
 		<p>
-			<strong>TranslationWithTemporalDictionaryサービスの利用</strong>
+			TranslationWithTemporalDictionaryはもっとも基本的な翻訳機能を提供します。
+		</p>
 			<pre>
 $url = 'http://langrid.nict.go.jp/service_manager/wsdl/kyotou.langrid:TranslationCombinedWithBilingualDictionary';
 
 try{
     // サービスクライアントの作成
-    $this->client = ClientFactory::createTranslationWithTemporalDictionaryClient($url);
+    $client = ClientFactory::createTranslationWithTemporalDictionaryClient($url);
 
     // サービス認証情報の設定（サービス全体でデフォルトの認証を利用する場合は省略できます。[後述]）
-    $this->client->setUserId('someUserId');
-    $this->client->setPassword('somePassword');	
+    $client->setUserId('someUserId');
+    $client->setPassword('somePassword');	
 
     // バインディングサービスの設定
-    $this->client->addBindings(new BindingNode("BilingualDictionaryPL", "KyotoTourismDictionaryDb"));
-    $this->client->addBindings(new BindingNode("TranslationPL", "GoogleTranslate"));
+    $client->addBindings(new BindingNode("BilingualDictionaryPL", "KyotoTourismDictionaryDb"));
+    $client->addBindings(new BindingNode("TranslationPL", "GoogleTranslate"));
 
 
     // サービスの呼び出し
-    $result = $this->client->translate(
+    $result = $client->translate(
         Language::get('ja'),
         Language::get('en'),
         '京都の比叡山を含む東山は東山３６峰とも呼ばれています．',
@@ -93,21 +102,29 @@ try{
 } catch(Exception $e) {
     var_dump($e);
 }</pre>
-		</p>
-
+    <p>
+    <strong>解説：</strong><br />
+    <code>addBindings</code>で、利用するサービスの順番を指定します（？）このサンプルでは、...<br />
+    <code>new Translation('東山３６峰', array('HIGASHIYAMA36HOU'))</code>では、ローカル辞書の値を翻訳関数に引き渡しています。
+    これによって...<br />
+    </p>
+        <h3>TextToSpeechサービスの利用</h3>
 		<p>
-			<strong>TextToSpeechサービスの利用</strong>
-			<pre>
-				
-			</pre>
+		TextToSpeechサービスは文字列を指定した言語で発音させることができます。
 		</p>
+        <pre>
+            
+        </pre>
 
+        <h3>BilingualDictionaryサービスの利用</h3>
+        <p>
+        BilingualDictionaryとは...
+        </p>
 		<p>
-			<strong>BilingualDictionaryサービスの利用</strong>
-			<pre>
-				
-			</pre>
 		</p>
+        <pre>
+            
+        </pre>
 	</div><!-- /.section -->
 
 	<div class="section" id="servicegridapi">
