@@ -21,15 +21,15 @@ create table if not exists dictionary_records (
 
 create table if not exists dictionary_contents (
 	id integer not null primary key auto_increment,
-	dictionaryrecord_id integer not null,
+	dictionary_record_id integer not null,
 	language varchar(25) not null,
 	text text,
 	created_at timestamp not null,
 	updated_at timestamp not null,
 	created_by varchar(12),
 	updated_by varchar(12),
-	unique(dictionaryrecord_id, language)
-) ENGINE=InnoDB;
+	unique(dictionary_record_id, language)
+) default charset utf8 collate utf8_unicode_ci ENGINE=InnoDB;
 
 create table if not exists dictionary_languages (
 	id integer not null primary key auto_increment,
@@ -53,4 +53,4 @@ create table if not exists dictionaries_tags (
 create table if not exists tags (
 	id integer not null primary key auto_increment,
 	value varchar(24) not null unique
-) ENGINE=InnoDB;
+) default charset utf8 collate utf8_unicode_ci ENGINE=InnoDB;

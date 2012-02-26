@@ -6,10 +6,7 @@
  * Time: 14:05
  * To change this template use File | Settings | File Templates.
  */
-foreach (glob('*Test.php') as $file)
-{
-    require $file;
-}
+require_once 'models/LocalServiceAllTests.php';
 
 class AllTests
 {
@@ -17,10 +14,7 @@ class AllTests
     {
         $suite = new PHPUnit_Framework_TestSuite('PHPUnit');
 
-        foreach (glob('*Test.php') as $file)
-        {
-            $suite->addTestSuite(substr($file,0,-4));
-        }
+        $suite->addTest(LocalServiceAllTests::suite());
 
         return $suite;
     }
