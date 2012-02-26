@@ -5,8 +5,8 @@ create table if not exists dictionaries (
 	created_at timestamp not null,
 	updated_at timestamp not null,
 	dictionary_records_count integer not null default '0',
-	create_user varchar(12) not null,
-	update_user varchar(12) not null,
+	created_by varchar(12) not null,
+	updated_by varchar(12) not null,
 	delete_flag tinyint default '0' not null,
 	user_read tinyint default '1' not null,
 	user_write tinyint default '1' not null,
@@ -21,27 +21,28 @@ create table if not exists dictionary_records (
 
 create table if not exists dictionary_contents (
 	id integer not null primary key auto_increment,
-	dictionary_record_id integer not null,
-	language varchar(2),
-	contents text,
-	create_at timestamp,
-	update_at timestamp,
-	create_user varchar(12),
-	update_user varchar(12),
-	unique(dictionary_record_id, language)
+	dictionaryrecord_id integer not null,
+	language varchar(25) not null,
+	text text,
+	created_at timestamp not null,
+	updated_at timestamp not null,
+	created_by varchar(12),
+	updated_by varchar(12),
+	unique(dictionaryrecord_id, language)
 ) ENGINE=InnoDB;
 
-create table if not exists dictionaries_languages (
+create table if not exists dictionary_languages (
 	id integer not null primary key auto_increment,
-	dictionary_id integer,
-	language varchar(2)
+	dictionary_id integer not null,
+	language varchar(25) not null,
+	unique(dictionary_id, language)
 ) ENGINE=InnoDB;
 
 create table if not exists dictionaries_deployments (
 	id integer not null primary key auto_increment,
 	dictionary_id integer not null,
-	create_at timestamp,
-	create_user varchar(12)
+	created_at timestamp,
+	created_by varchar(12)
 ) ENGINE=InnoDB;
 
 create table if not exists dictionaries_tags (

@@ -1,0 +1,3 @@
+id, name, licenser, dictionary_records_count, created_by, updated_by, user_read, user_write, any_read, any_write
+1, "test_dict", "", 0, 1, 1, 1, 1, 1, 1
+2, "sample_dict", "", 0, 1, 1, 1, 1, 1, 1

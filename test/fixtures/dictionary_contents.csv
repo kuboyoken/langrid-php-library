@@ -1,0 +1,11 @@
+id, dictionaryrecord_id, language, text, created_by
+1, 1, "ja", "こんにちは", 1
+2, 1, "en", "hello", 1
+3, 2, "ja", "朝", 1
+4, 2, "en", "morning", 1
+5, 3, "ja", "コーヒー", 1
+6, 3, "en", "coffee", 1
+7, 4, "ja", "おはよう", 1
+8, 4, "en", "morning", 1
+9, 5, "ja", "茶", 1
+10, 5, "en", "tea", 1
