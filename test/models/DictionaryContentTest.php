@@ -18,7 +18,31 @@ class DictionaryContentTest extends PHPUnit_Framework_TestCase
 
     public function testHoge(){
         $contents = DictionaryContent::all();
-        var_dump($contents);
         $this->assertTrue(true);
+    }
+
+    public function testValidatePresenseDictionaryRecordId(){
+        $content = new DictionaryContent(array('text' => 'testword', 'language' => 'ja'));
+        $this->assertTrue($content->is_invalid(), 'failure ValidatePresenseLanguage: dictionary_record_id');
+    }
+
+    public function testValidatePresenseLanguage(){
+        $content = new DictionaryContent(array('dictionary_record_id' => 1, 'text' => 'testword'));
+        $this->assertTrue($content->is_invalid(), 'failure ValidatePresenseLanguage: language');
+    }
+
+    public function testValidatePresenseText(){
+        $content = new DictionaryContent(array('dictionary_record_id' => "", 'language' => 'ja'));
+        $this->assertTrue($content->is_invalid(), 'failure ValidatePresenseLanguage: text');
+    }
+
+    public function testValidateUniqueLanguage(){
+        $content = DictionaryContent::find(1);
+        $newContent = DictionaryContent::create(array(
+            'dictionary_record_id' => $content->dictionary_record_id,
+            'language' => $content->language,
+            'text' => 'test'
+        ));
+        $this->assertTrue($newContent->is_invalid(), 'failure ValidatePresenseLanguage');
     }
 }
