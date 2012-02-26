@@ -45,4 +45,26 @@ class DictionaryContentTest extends PHPUnit_Framework_TestCase
         ));
         $this->assertTrue($newContent->is_invalid(), 'failure ValidatePresenseLanguage');
     }
+
+    public function testUpdateWithAttribute(){
+        $content = DictionaryContent::find(2);
+        $content->update_attribute('text','updated');
+        $readContent = DictionaryContent::find(2);
+        $this->assertEquals($readContent->text, 'updated');
+    }
+
+    public function testUpdateWithAttributes(){
+        $content = DictionaryContent::find(2);
+        $content->update_attributes(array('text' =>'changed'));
+        $readContent = DictionaryContent::find(2);
+        $this->assertEquals($readContent->text, 'changed');
+    }
+
+    public function testUpdateWithSave(){
+        $content = DictionaryContent::find(3);
+        $content->text = 'modified';
+        $content->save();
+        $readContent = DictionaryContent::find(3);
+        $this->assertEquals($readContent->text, 'modified');
+    }
 }

@@ -19,11 +19,18 @@ class DictionaryContent extends MLSModel
         array('dictionary_record_id'), array('language'), array('text')
     );
 
+    //  can't use uniquness. because validation error occured on update too. I except that it should check only on create.
+//    static $validates_uniqueness_of = array(
+//        array('dictionary_record_id', 'language')
+//    );
+
     public function validate() {
+
         $content = self::first(array(
             'conditions' => array('dictionary_record_id' => $this->dictionary_record_id, 'language' => $this->language)
         ));
-        if($content) {
+
+        if($this->is_new_record() && $content) {
             $this->errors->add('language', 'already exists "'.$this->language.'"');
         }
     }
