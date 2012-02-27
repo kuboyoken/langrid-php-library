@@ -23,7 +23,7 @@ class DictionaryLanguage extends MLSModel
         $language = self::first(array(
             'conditions' => array('dictionary_id' => $this->dictionary_id, 'language' => $this->language)
         ));
-        if($language) {
+        if($this->is_new_record() && $language) {
             $this->errors->add('language', 'already exists "'.$this->language.'"');
         }
     }

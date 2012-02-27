@@ -20,7 +20,7 @@ class DictionaryLanguageTest extends PHPUnit_Framework_TestCase
     }
 
     public function testValidatePresenseLanguage(){
-        $language = new DictionaryLanguage(array('dictionary_id' => 2));
+        $language = DictionaryLanguage::create(array('dictionary_id' => 2));
         $this->assertTrue($language->is_invalid(), 'failure ValidatePresenseLanguage');
     }
 
@@ -30,6 +30,6 @@ class DictionaryLanguageTest extends PHPUnit_Framework_TestCase
             'dictionary_id' => $language->dictionary_id,
             'language' => $language->language
         ));
-        $this->assertTrue($language->is_invalid(), 'failure ValidatePresenseLanguage');
+        $this->assertTrue($newLanguage->is_invalid(), 'failure ValidateUniqueLanguage');
     }
 }
