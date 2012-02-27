@@ -90,22 +90,47 @@ class DictionaryTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(in_array('en', $dict->get_languages()));
     }
 
-//    public function testAdd_language(){
-//        $dict = Dictionary::find(1);
-//        $dict->add_language(Language::get('zh'));
-//
-//        $readDict = Dictionary::find(1);
-//        $this->assertTrue(count($readDict->get_languages()) == 3);
-//        $this->assertTrue(in_array('zh', $readDict->get_languages()));
-//    }
-//
-//    public function testAdd_language_validate_unique(){
-//        $dict = Dictionary::find(1);
-//        try {
-//            $dict->add_language(Language::get('en'));
-//            $this->assertTrue(false, 'failure validate unique');
-//        } catch(ActiveRecord\DatabaseException $e) {
-//
-//        }
-//    }
+    public function testAdd_language(){
+        $dict = Dictionary::find(1);
+        $dict->add_language(Language::get('zh'));
+
+        $readDict = Dictionary::find(1);
+        $this->assertTrue(count($readDict->get_languages()) == 3);
+        $this->assertTrue(in_array('zh', $readDict->get_languages()));
+    }
+
+    public function testAdd_language_validate_unique(){
+        $dict = Dictionary::find(1);
+        try {
+            $dict->add_language(Language::get('en'));
+            $this->assertTrue(false, 'failure validate unique');
+        } catch(MLSException $e) {
+            $this->assertTrue(true);
+        }
+    }
+
+    public function testIs_deploy() {
+        $dict = Dictionary::find(1);
+        $this->assertTrue($dict->is_deploy());
+    }
+
+    public function testIs_not_deploy() {
+        $dict = Dictionary::find(2);
+        $this->assertFalse($dict->is_deploy());
+    }
+
+    public function testDeploy() {
+        $dict = Dictionary::find(2);
+        $dict->deploy();
+        $dict = Dictionary::find(2);
+        $this->assertTrue($dict->is_deploy());
+    }
+
+    public function testUndeploy() {
+        $dict = Dictionary::find(1);
+        $dict->undeploy();
+        $dict = Dictionary::find(1);
+        $this->assertFalse($dict->is_deploy());
+
+    }
 }

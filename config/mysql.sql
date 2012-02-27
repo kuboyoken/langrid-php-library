@@ -38,7 +38,7 @@ create table if not exists dictionary_languages (
 	unique(dictionary_id, language)
 ) ENGINE=InnoDB;
 
-create table if not exists dictionaries_deployments (
+create table if not exists dictionary_deployments (
 	id integer not null primary key auto_increment,
 	dictionary_id integer not null,
 	created_at timestamp,

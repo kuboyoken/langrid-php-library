@@ -17,16 +17,28 @@ class Dictionary extends MLSModel
         array('dictionary_languages')
     );
 
+    static $has_one = array(
+        array('deployment', 'class_name' => 'DictionaryDeployment')
+    );
+
     function add_language(Language $language){
-        return $this->create_languages(array('language' => $language->getTag()));
+        $dictionary_language = $this->create_dictionary_languages(array('language' => $language->getTag()));
+        if($dictionary_language->is_invalid()) MLSException::create($dictionary_language->errors->on('language'));
+        return $dictionary_language;
     }
     
     function deploy(){
-
+        $this->create_deployment();
     }
 
     function undeploy(){
+        if($this->is_deploy()) {
+            $this->deployment->delete();
+        }
+    }
 
+    function is_deploy() {
+        return $this->deployment != null;
     }
 
     function count_records_by_language(){
