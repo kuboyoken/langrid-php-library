@@ -29,8 +29,8 @@ class DictionaryRecordTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($contents['en'], 'hello');
     }
 
-    public function testCount_by_dictionary_id_and_languages(){
-        $result = DictionaryRecord::count_by_dictionary_id_and_languages(2);
+    public function testCount_by_dictionary_id_each_languages(){
+        $result = DictionaryRecord::count_by_dictionary_id_each_languages(2);
         $this->assertTrue($result['ja'] == 5);
         $this->assertTrue($result['en'] == 4);
         $this->assertTrue($result['ko'] == 3);

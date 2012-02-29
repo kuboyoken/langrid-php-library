@@ -35,4 +35,16 @@ class DictionaryContent extends MLSModel
         }
     }
 
+    public static function find_all_by_dictionary_id($dictionary_id) {
+        return self::all(array(
+            'joins' => 'LEFT JOIN dictionary_records r ON dictionary_record_id = r.id',
+            'conditions' => 'r.dictionary_id ='.$dictionary_id
+        ));
+    }
+
+    public static function delete_all_by_dictionary_id_and_language($dictionary_id, Language $language) {
+        return self::delete_all(array(
+            'conditions' => 'dictionary_contents.language = "'.$language->getTag().'" AND EXISTS(SELECT * FROM dictionary_records WHERE dictionary_id = '.$dictionary_id.' AND id=dictionary_record_id)'
+        ));
+    }
 }

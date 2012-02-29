@@ -50,7 +50,7 @@ class DictionaryRecord extends MLSModel
     }
 
     /*
-     * $params: (language => text)
+     * $params: {language => value}
      * [example] update_contents(array('ja' => '京都', 'en' => 'Kyoto'), '1');
      */
     public function update_contents(array $params = array(), $update_user = ''){
@@ -84,11 +84,11 @@ class DictionaryRecord extends MLSModel
     }
 
     static function count_by_dictionary_id_and_language($dictionary_id, Language $languageCode){
-        $counts = self::count_by_dictionary_id_and_languages($dictionary_id);
+        $counts = self::count_by_dictionary_id_each_languages($dictionary_id);
         return @$counts[$languageCode.''];
     }
 
-    static function count_by_dictionary_id_and_languages($dictionary_id){
+    static function count_by_dictionary_id_each_languages($dictionary_id){
         $records = self::all(array(
             'select' => 'count(*) as count, language',
             'joins' => array('dictionary_contents'),
@@ -105,6 +105,13 @@ class DictionaryRecord extends MLSModel
         return $result;
     }
 
+    /*
+     * $dictionary_id: target dictionary id
+     * $params: {language => value}
+     * $create_user: create user
+     *
+     * [example] create_record(1, array('ja' => '京都', 'en' => 'Kyoto'), '1');
+     */
     static function create_record($dictionary_id, array $params = array(), $create_user = '') {
 
         $dictionary_record = self::create(array('dictionary_id' => $dictionary_id));
@@ -112,5 +119,27 @@ class DictionaryRecord extends MLSModel
         if($dictionary_record->is_invalid()) MLSException::create('validate error');
 
         $dictionary_record->update_contents($params, $create_user);
+
+        return $dictionary_record;
+    }
+
+//    static function find_all_by_dictionary_id($options) {
+//
+//    }
+
+    protected static function add_args_dictionary_id($dictionary_id, $options) {
+        $conditions = @$options['conditions'];
+        if($conditions) {
+            if(is_string($conditions)) {
+                $conditions .= ' AND dictioanry_id = '.intval($dictionary_id);
+            } else if(is_array($conditions)) {
+                $conditions = array('dictioanry_id' => $dictionary_id);
+            }
+            $options['conditions'] = $conditions;
+
+        } else {
+            $options['conditions'] = array('dictioanry_id' => $dictionary_id);
+        }
+        return $options;
     }
 }

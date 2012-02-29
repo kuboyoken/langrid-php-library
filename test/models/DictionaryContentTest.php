@@ -67,4 +67,17 @@ class DictionaryContentTest extends PHPUnit_Framework_TestCase
         $readContent = DictionaryContent::find(3);
         $this->assertEquals($readContent->text, 'modified');
     }
+
+    public function testFind_all_by_dictionary_id() {
+        $contents = DictionaryContent::find_all_by_dictionary_id(1);
+        $this->assertTrue(count($contents) == 10);
+    }
+
+    public function testDelete_all_by_dictionary_id_and_language() {
+        $beforeCount = count(DictionaryContent::find_all_by_dictionary_id(5));
+        DictionaryContent::delete_all_by_dictionary_id_and_language(5, Language::get('ja'));
+        $afterCount = count(DictionaryContent::find_all_by_dictionary_id(5));
+        $this->assertTrue($beforeCount > $afterCount);
+        $this->assertTrue($afterCount == 4);
+    }
 }
