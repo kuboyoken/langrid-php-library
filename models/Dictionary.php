@@ -13,7 +13,7 @@ class Dictionary extends MLSModel
 {
 
     static $has_many = array(
-        array('records', 'class_name' => "DictionaryRecord"),
+        array('dictionary_records'),
         array('dictionary_languages')
     );
 
@@ -93,16 +93,16 @@ class Dictionary extends MLSModel
      * $create_user: create user ID
      */
     function add_record($params = array(), $create_user = null) {
-        $new_dictionary_record = $this->create_records();
+        $new_dictionary_record = $this->create_dictionary_records();
         $new_dictionary_record->update_contents($params, $create_user);
         return $new_dictionary_record;
     }
 
     function records_count(){
-        return count($this->records);
+        return count($this->dictionary_records);
     }
 
-    function list_records(/* ... */) {
+    function get_records(/* ... */) {
         $options = static::extract_and_validate_options(func_get_args());
         if(!@$options['limit']) $options['limit'] = 2;
         if(!@$options['offset']) $options['offset'] = 3;
@@ -115,6 +115,18 @@ class Dictionary extends MLSModel
 
     function count_records_by_language(Language $language){
         return DictionaryRecord::count_by_dictionary_id_and_language($this->id, $language);
+    }
+
+    function can_view($user_id = null) {
+        return $this->any_read == 1 || ($this->is_owner($user_id) && $this->user_read);
+    }
+
+    function can_edit($user_id = null) {
+        return $this->any_write == 1 || ($this->is_owner($user_id) && $this->user_write);
+    }
+
+    function is_owner($user_id = null) {
+        return $user_id && $this->created_by == $user_id;
     }
 
     function to_json(array $options=array()){

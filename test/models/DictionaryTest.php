@@ -84,9 +84,9 @@ class DictionaryTest extends PHPUnit_Framework_TestCase
 
     public function testFindInclude(){
         $dict = Dictionary::first(array(
-            'include' => 'records'
+            'include' => 'dictionary_records'
         ));
-        $this->assertTrue(count($dict->records) == 5);
+        $this->assertTrue(count($dict->dictionary_records) == 5);
     }
 
     public function testRemove() {
@@ -257,9 +257,9 @@ class DictionaryTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($dict->records_count() == 5);
     }
 
-    public function testList_records() {
+    public function testGet_records() {
         $dict = $dict = Dictionary::find(2);
-        $records = $dict->list_records(array('offset' => 2, 'limit' => 2, 'order' => 'id desc'));
+        $records = $dict->get_records(array('offset' => 2, 'limit' => 2, 'order' => 'id desc'));
         $this->assertTrue(count($records) == 2);
         $this->assertTrue($records[0]->id == '8');
         $this->assertTrue($records[1]->id == '7');
