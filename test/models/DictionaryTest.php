@@ -265,6 +265,38 @@ class DictionaryTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($records[1]->id == '7');
     }
 
+    public function testCan_view_any () {
+        $dict = $dict = Dictionary::find(1);
+        $this->assertTrue($dict->can_view(1));
+        $this->assertTrue($dict->can_view(2));
+        $this->assertTrue($dict->can_view());
+    }
+
+    public function testCan_view_only_user () {
+        $dict = $dict = Dictionary::find(2);
+        $this->assertFalse($dict->can_view(1));
+        $this->assertTrue($dict->can_view(2));
+    }
+
+    public function testCan_edit_any () {
+        $dict = $dict = Dictionary::find(1);
+        $this->assertTrue($dict->can_edit(1));
+        $this->assertTrue($dict->can_edit(2));
+        $this->assertTrue($dict->can_edit());
+    }
+
+    public function testCan_edit_only_user () {
+        $dict = $dict = Dictionary::find(2);
+        $this->assertFalse($dict->can_edit(1));
+        $this->assertTrue($dict->can_edit(2));
+    }
+
+    public function testIs_owner () {
+        $dict = $dict = Dictionary::find(1);
+        $this->assertTrue($dict->is_owner(1));
+        $this->assertFalse($dict->is_owner(2));
+    }
+
     public function testCreate_with_records(){
         $dict = Dictionary::create_with_records(array(
             'name' => 'TestDictionary',

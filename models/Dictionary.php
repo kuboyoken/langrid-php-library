@@ -53,6 +53,7 @@ class Dictionary extends MLSModel
             DictionaryContent::delete_all($this->id, $language);
         }
         $this->reload();
+        return true;
     }
 
     /*
@@ -71,6 +72,7 @@ class Dictionary extends MLSModel
         foreach($deletes as $l) {
             $this->remove_language(Language::get($l), $force_on_delete);
         }
+        return true;
     }
 
     function is_deploy() {
@@ -99,7 +101,7 @@ class Dictionary extends MLSModel
     }
 
     function records_count(){
-        return count($this->dictionary_records);
+        return DictionaryRecord::count_by_dictionary_id($this->id);
     }
 
     function get_records(/* ... */) {

@@ -6,9 +6,9 @@
  * Time: 23:12
  * To change this template use File | Settings | File Templates.
  */
-require_once dirname(__FILE__).'/Dictionary.php';
+require_once dirname(__FILE__) . '/../MultiLanguageStudio.php';
 
-class DictionaryLegacyWrapper
+class DictionaryLegacyBridge
 {
     const TYPE_ID_DICTIONARY = 0;
     const TYPE_PARALLEL_TEXT = 1;
@@ -16,20 +16,20 @@ class DictionaryLegacyWrapper
     /*
      * use instead of UserDictionaryController::doCreate
      */
-    public function doCreate($params, $userId = '') {
+    static public function doCreate($params, $userId = '') {
         $dict = null;
 
         $typeId = $params['dictionaryTypeId'];
 
-        if($typeId == TYPE_ID_DICTIONARY) {
+        if($typeId == self::TYPE_ID_DICTIONARY) {
             $dict = Dictionary::create_with_records(array(
-                'name' => $this->escape($params['dictionaryName']),
+                'name' => self::escape($params['dictionaryName']),
                 'languages' => $params['supportedLanguages'],
                 'records' => $params['records']
             ), $userId);
         }
 
-        if($params['deployFlag'] === true) {
+        if(@$params['deployFlag'] && $params['deployFlag'] === true) {
             $dict->deploy();
         }
 
@@ -42,14 +42,77 @@ class DictionaryLegacyWrapper
     /*
      * use instead of UserDictionaryController::doUpdate
      */
-    public function doUpdate($params) {
+    static public function doUpdate($params) {
+
+        $dictionaryId = intval($params['dictionaryId']);
+        $result = true;
+        $dict = Dictionary::find($dictionaryId);
+        // 言語削除分
+        if(@$params['removeLanguages']) {
+            foreach($params['removeLanguages'] as $language) {
+                $result &= $dict->remove_language(Language::get($language), true);
+            }
+        }
+
+        // 更新分
+        $result &= $dict->update_languages($params['valueToSave'][0], true);
+
+        foreach(array_slice($params['valueToSave'], 1) as $record) {
+            $hash = array();
+            $i = 0;
+            foreach($params['valueToSave'][0] as $lang) {
+                $hash[$lang] = $record[$i++];
+            }
+            $dict->add_record($hash);
+        }
+
+
+        // 新規追加分
+        if(@$params['newRecord']) {
+            foreach($params['newRecord'] as $record) {
+                $hash = array();
+                $i = 0;
+                foreach($params['valueToSave'][0] as $lang) {
+                    $hash[$lang] = $record[$i++];
+                }
+                $dict->add_record($hash);
+            }
+        }
+
+        if(@$params['editPermission'] && $params['editPermission'] == 'all') {
+            $dict->update_attributes(array(
+                'any_read' => true, 'any_write' => true
+            ));
+        } else if(@$params['viewPermission'] && $params['viewPermission'] == 'all') {
+            $dict->update_attributes(array(
+                'any_read' => true, 'any_write' => false
+            ));
+        }
+
+//        $dictionary = $this->getDictionary($dictionaryId);
+//        // call user hook function
+//        $pinfo = pathinfo(__FILE__);
+//        $hookfile = $pinfo['dirname'].'/hooks/'.$pinfo['filename'].'.hook.'.$pinfo['extension'];
+//        if (file_exists($hookfile)) {
+//            require_once($hookfile);
+//            $hookclass = get_class($this).'_Hook';
+//            if (class_exists($hookclass)) {
+//                $hook =& new $hookclass;
+//                $hookfunc = 'doUpdateAfter';
+//                if (method_exists($hook, $hookfunc)) {
+//                    call_user_method($hookfunc, $hook, $dictionary);
+//                }
+//            }
+//        }
+
+        return (boolean)$result;
 
     }
 
     /*
      * use instead of UserDictionaryController::doDownload
      */
-    public function doDownload($dictionaryId) {
+    static public function doDownload($dictionaryId) {
         $dict = Dictionary::find(intval($dictionaryId));
         $records = DictionaryRecord::find_by_dictionary_id(intval($dictionaryId));
 
@@ -67,14 +130,14 @@ class DictionaryLegacyWrapper
         $output = chr(255).chr(254).mb_convert_encoding($output, "UTF-16LE", "UTF-8");
         return array(
             "output" => $output,
-            "name" => $this->getCleanFileName($dictionary['dictionary_name'])
+            "name" => self::getCleanFileName($dict->name)
         );
     }
 
     /*
      * use instead of UserDictionaryController::doUpload
      */
-    public function doUpload($tmpFilePath, $typeId, $name, $editPermission, $readPermission, $mimeType) {
+    static public function doUpload($tmpFilePath, $typeId, $name, $editPermission, $readPermission, $mimeType) {
         $tmpFileLines = file($tmpFilePath);
         $code = mb_detect_encoding($tmpFileLines[0]);
 
@@ -87,7 +150,7 @@ class DictionaryLegacyWrapper
         }
         if ($code == '') {
             $error = '_MI_DICTIONARY_ERROR_FILE_FORMAT_INVALID';
-            return $this->_doUploadErrorResponse($error);
+            return self::_doUploadErrorResponse($error);
         }
 
         $tmpFileContent = '';
@@ -133,7 +196,7 @@ class DictionaryLegacyWrapper
             $dictTable[] = $tableRow;
         }
 
-        $response = $this->doCreate(array(
+        $response = self::doCreate(array(
             'dictionaryName' => $name,
             'viewPermission' => $editPermission,
             'editPermission' => $readPermission,
@@ -143,33 +206,49 @@ class DictionaryLegacyWrapper
         ));
 
         if (strtoupper($response['status']) == 'ERROR') {
-            return $this->_doUploadErrorResponse($response['message']);
+            return self::_doUploadErrorResponse($response['message']);
         } else {
-            return $this->_doUploadSuccessResponse(intval(@$response['dictionaryId']));
+            return self::_doUploadSuccessResponse(intval(@$response['dictionaryId']));
         }
     }
 
-    private function _doUploadErrorResponse($error) {
+    static private function _doUploadErrorResponse($error) {
         $scripts = <<<JS
 			alert("{$error}");
 			parent.DialogViewController.hideIndicator();
 JS;
-        return $this->_doUploadResponse($scripts);
+        return self::_doUploadResponse($scripts);
     }
 
-    private function _doUploadSuccessResponse($dictionaryId) {
+    static private function _doUploadSuccessResponse($dictionaryId) {
         $scripts = <<<JS
 			with(window.parent) {
 				DialogViewController.ImportDictionary.afterImport({$dictionaryId});
 			}
 JS;
-        return $this->_doUploadResponse($scripts);
+        return self::_doUploadResponse($scripts);
+    }
+
+    static private function _doUploadResponse($scripts) {
+        return <<<HTML
+			<html>
+			<head>
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+			<title>Langrid ToolBox</title>
+			</head>
+			<body>
+			<script language="JavaScript" type="text/javascript">
+			{$scripts}
+			</script>
+			</body>
+			</html>
+HTML;
     }
 
     /*
      * use instead of UserDictionaryController::doDeploy
      */
-    public function deploy($dictionaryId) {
+    static public function deploy($dictionaryId) {
         $dict = Dictionary::find(intval($dictionaryId));
         if($dict) {
             $dict->deploy();
@@ -181,7 +260,7 @@ JS;
     /*
      * use instead of UserDictionaryController::doUndeploy
      */
-    public function undeploy($dictionaryId) {
+    static public function undeploy($dictionaryId) {
         $dict = Dictionary::find(intval($dictionaryId));
         if($dict && $dict->is_deploy()) {
             $dict->undeploy();
@@ -193,9 +272,9 @@ JS;
     /*
      * use instead of UserDictionaryController::getAllDictionariesByTypeId
      */
-    public function getAllDictionariesByTypeId($typeId, $limit = 10, $offset = 0, $userId = '') {
+    static public function getAllDictionariesByTypeId($typeId, $limit = 10, $offset = 0, $userId = '') {
         $resources = array();
-        if($typeId == TYPE_ID_DICTIONARY) {
+        if($typeId == self::TYPE_ID_DICTIONARY) {
             $resources = Dictionary::all();
         }
 
@@ -218,8 +297,8 @@ JS;
     /*
      * use instead of UserDictionaryController::countAllDictionariesByTypeId
      */
-    public function countAllDictionariesByTypeId($typeId) {
-        if($typeId == TYPE_ID_DICTIONARY) {
+    static public function countAllDictionariesByTypeId($typeId) {
+        if($typeId == self::TYPE_ID_DICTIONARY) {
             return Dictionary::count();
         }
         return 0;
@@ -228,7 +307,7 @@ JS;
     /*
      * use instead of UserDictionaryController::getAllDictionaryContentsByDictionaryId
      */
-    public function getAllDictionaryContentsByDictionaryId($dictionaryId, $limit = 10, $offset = 0) {
+    static public function getAllDictionaryContentsByDictionaryId($dictionaryId, $limit = 10, $offset = 0) {
         $dict = Dictionary::find(intval($dictionaryId));
         $langs = $dict->get_languages();
 
@@ -249,59 +328,78 @@ JS;
     /*
      * use instead of UserDictionaryController::getPermission
      */
-    public function getPermission($id) {
+    static public function getPermission($dictionaryId) {
+        $dict = Dictionary::find($dictionaryId);
 
+        $permission = array(
+            'dictionary' => array(
+                'edit' => 'user', 'view' => 'user'
+            )
+        );
+
+        if($dict->any_write) {
+            $permission['dictionary']['edit'] = 'all';
+        }
+
+        if($dict->any_read) {
+            $permission['dictionary']['view'] = 'all';
+        }
+
+        return $permission;
     }
 
     /*
      * use instead of UserDictionaryController::canChangePermission
      */
-    public function canChangePermission($dictionaryId){
-
+    static public function canChangePermission($dictionaryId, $userId){
+        $dict = Dictionary::find($dictionaryId);
+        return $dict->is_owner($userId);
     }
 
     /*
      * use instead of UserDictionaryController::canEdit
      */
-    public function canEdit($dictionaryId) {
-
+    static public function canEdit($dictionaryId, $userId) {
+        $dict = Dictionary::find($dictionaryId);
+        return $dict->can_edit($userId);
     }
 
-    public function getDictionary($id) {
-
+    static public function canLoad($dictionaryId, $userId) {
+        $dict = Dictionary::find($dictionaryId);
+        return $dict->can_read($userId);
     }
 
-    public function countAllDictionaryContentsByDictionaryId($dictionaryId) {
-
+    static public function getDictionary($dictionaryId) {
+        $dict = Dictionary::first(array('conditions' => array('dictionary_id' => intval($dictionaryId))));
+        if($dict) {
+            return array(
+                'dictionary_name' => $dict->name,
+                'type_id' => self::TYPE_ID_DICTIONARY,
+                'deploy_flag' => $dict->is_deploy(),
+                'update_date' => $dict->updated_at
+            );
+        } else {
+            return array();
+        }
     }
 
-    public function canLoad($dictionaryId) {
-
+    static public function countAllDictionaryContentsByDictionaryId($dictionaryId) {
+        $dict = Dictionary::first(array('conditions' => array('dictionary_id' => intval($dictionaryId))));
+        return $dict ? $dict->records_count() : 0;
     }
 
-//    public function removeLanguagesAll($dictionaryId, $languages = array()) {
-//
-//    }
-//
-//    public function updateContentsAll($dictionaryId, $supportedLanguages, $records) {
-//
-//    }
-//
-//    public function createContentsAll($dictionaryId, $supportedLanguages, $records) {
-//
-//    }
-
-
-
-
-
-    private function escape($str) {
+    static private function escape($str) {
         if ( get_magic_quotes_gpc() ) {
             $str = stripslashes( $str );
         }
         return mysql_real_escape_string($str);
     }
 
-
-
+    static private function getCleanFileName($fileName) {
+        $fileName = str_replace(array('.', '_', '-', ' '), '', $fileName);
+        if (!$fileName) {
+            $fileName = 'resource';
+        }
+        return $fileName.'.txt';
+    }
 }
