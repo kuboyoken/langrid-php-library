@@ -42,7 +42,7 @@ class DictionaryLegacyBridge
     /*
      * use instead of UserDictionaryController::doUpdate
      */
-    static public function doUpdate($params) {
+    static public function doUpdate($params, $userId = '') {
 
         $dictionaryId = intval($params['dictionaryId']);
         $result = true;
