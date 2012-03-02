@@ -26,7 +26,7 @@ class DictionaryRecord extends MLSModel
     static $alias_attribute = array('contents' => 'dictionary_contents');
 
     static protected function get_resource_name(){
-        $underscorecase = ActiveRecord\Inflector::instance()->uncamelize(get_class());
+        $underscorecase = ActiveRecord\Inflector::instance()->uncamelize(get_called_class());
         return str_replace('_record', '', $underscorecase);
     }
 
@@ -94,15 +94,15 @@ class DictionaryRecord extends MLSModel
     /*
      * $resource_id: target dictionary(parallel text) id
      */
-    static function count_by_dictionary_id_and_language($resource_id, Language $languageCode){
-        $counts = self::count_by_dictionary_id_each_languages($resource_id);
+    static function count_by_resource_id_and_language($resource_id, Language $languageCode){
+        $counts = self::count_by_resource_id_each_languages($resource_id);
         return @$counts[$languageCode.''];
     }
 
     /*
      * $resource_id: target dictionary(parallel text) id
      */
-    static function count_by_dictionary_id_each_languages($resource_id){
+    static function count_by_resource_id_each_languages($resource_id){
         $records = self::all(array(
             'select' => 'count(*) as count, language',
             'joins' => array(self::get_resource_name().'_contents'),

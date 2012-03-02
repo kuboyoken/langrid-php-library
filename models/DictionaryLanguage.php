@@ -20,7 +20,7 @@ class DictionaryLanguage extends MLSModel
     );
 
     static protected function get_resource_name(){
-        $underscorecase = ActiveRecord\Inflector::instance()->uncamelize(get_class());
+        $underscorecase = ActiveRecord\Inflector::instance()->uncamelize(get_called_class());
         return str_replace('_language', '', $underscorecase);
     }
 

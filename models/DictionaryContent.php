@@ -25,7 +25,7 @@ class DictionaryContent extends MLSModel
 //    );
 
     static protected function get_resource_name(){
-        $underscorecase = ActiveRecord\Inflector::instance()->uncamelize(get_class());
+        $underscorecase = ActiveRecord\Inflector::instance()->uncamelize(get_called_class());
         return str_replace('_content', '', $underscorecase);
     }
 
@@ -43,7 +43,7 @@ class DictionaryContent extends MLSModel
     /*
      * $resource_id: target dictionary(parallel text) id
      */
-    public static function find_all_by_dictionary_id($resource_id) {
+    public static function find_all_by_resource_id($resource_id) {
         $resource_name = self::get_resource_name();
         return self::all(array(
             'joins' => "LEFT JOIN {$resource_name}_records r ON {$resource_name}_record_id = r.id",
@@ -54,7 +54,7 @@ class DictionaryContent extends MLSModel
     /*
     * $resource_id: target dictionary(parallel text) id
     */
-    public static function delete_all_by_dictionary_id_and_language($resource_id, Language $language) {
+    public static function delete_all_by_resource_id_and_language($resource_id, Language $language) {
         $resource_name = self::get_resource_name();
         return self::delete_all(array(
             'conditions' => "{$resource_name}_contents.language = '".$language->getTag()."' AND EXISTS(SELECT * FROM {$resource_name}_records WHERE {$resource_name}_id = {$resource_id} AND id={$resource_name}_record_id)"
