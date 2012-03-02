@@ -24,10 +24,15 @@ class DictionaryContent extends MLSModel
 //        array('dictionary_record_id', 'language')
 //    );
 
+    static protected function get_resource_name(){
+        $underscorecase = ActiveRecord\Inflector::instance()->uncamelize(get_class());
+        return str_replace('_content', '', $underscorecase);
+    }
+
     public function validate() {
 
         $content = self::first(array(
-            'conditions' => array('dictionary_record_id' => $this->dictionary_record_id, 'language' => $this->language)
+            'conditions' => array(self::get_resource_name().'_record_id' => $this->read_attribute(self::get_resource_name().'_record_id'), 'language' => $this->language)
         ));
 
         if($this->is_new_record() && $content) {
@@ -35,16 +40,24 @@ class DictionaryContent extends MLSModel
         }
     }
 
-    public static function find_all_by_dictionary_id($dictionary_id) {
+    /*
+     * $resource_id: target dictionary(parallel text) id
+     */
+    public static function find_all_by_dictionary_id($resource_id) {
+        $resource_name = self::get_resource_name();
         return self::all(array(
-            'joins' => 'LEFT JOIN dictionary_records r ON dictionary_record_id = r.id',
-            'conditions' => 'r.dictionary_id ='.$dictionary_id
+            'joins' => "LEFT JOIN {$resource_name}_records r ON {$resource_name}_record_id = r.id",
+            'conditions' => "r.{$resource_name}_id =".intval($resource_id)
         ));
     }
 
-    public static function delete_all_by_dictionary_id_and_language($dictionary_id, Language $language) {
+    /*
+    * $resource_id: target dictionary(parallel text) id
+    */
+    public static function delete_all_by_dictionary_id_and_language($resource_id, Language $language) {
+        $resource_name = self::get_resource_name();
         return self::delete_all(array(
-            'conditions' => 'dictionary_contents.language = "'.$language->getTag().'" AND EXISTS(SELECT * FROM dictionary_records WHERE dictionary_id = '.$dictionary_id.' AND id=dictionary_record_id)'
+            'conditions' => "{$resource_name}_contents.language = '".$language->getTag()."' AND EXISTS(SELECT * FROM {$resource_name}_records WHERE {$resource_name}_id = {$resource_id} AND id={$resource_name}_record_id)"
         ));
     }
 }

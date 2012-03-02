@@ -19,9 +19,14 @@ class DictionaryLanguage extends MLSModel
         array('language')
     );
 
+    static protected function get_resource_name(){
+        $underscorecase = ActiveRecord\Inflector::instance()->uncamelize(get_class());
+        return str_replace('_language', '', $underscorecase);
+    }
+
     public function validate() {
         $language = self::first(array(
-            'conditions' => array('dictionary_id' => $this->dictionary_id, 'language' => $this->language)
+            'conditions' => array(self::get_resource_name().'_id' => $this->read_attribute(self::get_resource_name().'_id'), 'language' => $this->language)
         ));
         if($this->is_new_record() && $language) {
             $this->errors->add('language', 'already exists "'.$this->language.'"');

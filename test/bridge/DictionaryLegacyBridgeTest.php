@@ -57,7 +57,5 @@ class DictionaryLegacyBridgeTest extends PHPUnit_Framework_TestCase
 
     public function testDoDownload() {
         $result = DictionaryLegacyBridge::doDownload(1);
-        var_dump($result);
-
     }
 }

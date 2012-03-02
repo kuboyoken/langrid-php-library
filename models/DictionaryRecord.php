@@ -23,9 +23,16 @@ class DictionaryRecord extends MLSModel
         array('dictionary_id')
     );
 
+    static $alias_attribute = array('contents' => 'dictionary_contents');
+
+    static protected function get_resource_name(){
+        $underscorecase = ActiveRecord\Inflector::instance()->uncamelize(get_class());
+        return str_replace('_record', '', $underscorecase);
+    }
+
     public function get_contents($withAllProperty = false) {
         $result = array();
-        foreach($this->dictionary_contents as $content) {
+        foreach($this->read_attribute('contents') as $content) {
             if($withAllProperty) {
                 $result[$content->language] = array(
                     'text' => $content->text,
@@ -54,45 +61,52 @@ class DictionaryRecord extends MLSModel
      * [example] update_contents(array('ja' => '京都', 'en' => 'Kyoto'), '1');
      */
     public function update_contents(array $params = array(), $update_user = ''){
-        $dictionary_contents = $this->get_dictionary_contents_as_hash();
+        $contents = $this->get_contents_as_hash();
 
         foreach($params as $language => $text) {
             $parameter = array('language' => $language, 'text' => $text);
 
-            if(@$dictionary_contents[$language]) {
+            if(@$contents[$language]) {
                 if($update_user) $parameter['updated_by'] = $update_user;
-                $dictionary_contents[$language]->update_attributes($parameter);
+                $contents[$language]->update_attributes($parameter);
             } else {
                 if($update_user) {
                     $parameter = array_merge($parameter, array(
                         'created_by' => $update_user, 'updated_by' => $update_user)
                     );
                 }
-                $this->create_dictionary_contents($parameter);
+
+                call_user_func(array($this, 'create_'.self::get_resource_name().'_contents'), $parameter);
             }
         }
 
         return $this;
     }
 
-    private function get_dictionary_contents_as_hash(){
+    private function get_contents_as_hash(){
         $result = array();
-        foreach($this->dictionary_contents as $content) {
+        foreach($this->read_attribute('contents') as $content) {
             $result[$content->language] = $content;
         }
         return $result;
     }
 
-    static function count_by_dictionary_id_and_language($dictionary_id, Language $languageCode){
-        $counts = self::count_by_dictionary_id_each_languages($dictionary_id);
+    /*
+     * $resource_id: target dictionary(parallel text) id
+     */
+    static function count_by_dictionary_id_and_language($resource_id, Language $languageCode){
+        $counts = self::count_by_dictionary_id_each_languages($resource_id);
         return @$counts[$languageCode.''];
     }
 
-    static function count_by_dictionary_id_each_languages($dictionary_id){
+    /*
+     * $resource_id: target dictionary(parallel text) id
+     */
+    static function count_by_dictionary_id_each_languages($resource_id){
         $records = self::all(array(
             'select' => 'count(*) as count, language',
-            'joins' => array('dictionary_contents'),
-            'conditions' => array('dictionary_id' => $dictionary_id),
+            'joins' => array(self::get_resource_name().'_contents'),
+            'conditions' => array(self::get_resource_name().'_id' => $resource_id),
             'group' => 'language'
         ));
 
@@ -106,40 +120,35 @@ class DictionaryRecord extends MLSModel
     }
 
     /*
-     * $dictionary_id: target dictionary id
+     * $resource_id: target dictionary(parallel text) id
      * $params: {language => value}
      * $create_user: create user
      *
      * [example] create_record(1, array('ja' => '京都', 'en' => 'Kyoto'), '1');
      */
-    static function create_record($dictionary_id, array $params = array(), $create_user = '') {
+    static function create_record($resource_id, array $params = array(), $create_user = '') {
+        $record = self::create(array(self::get_resource_name().'_id' => $resource_id));
 
-        $dictionary_record = self::create(array('dictionary_id' => $dictionary_id));
+        if($record->is_invalid()) MLSException::create('validate error');
 
-        if($dictionary_record->is_invalid()) MLSException::create('validate error');
+        $record->update_contents($params, $create_user);
 
-        $dictionary_record->update_contents($params, $create_user);
-
-        return $dictionary_record;
+        return $record;
     }
 
-//    static function find_all_by_dictionary_id($options) {
+//    protected static function add_args_dictionary_id($dictionary_id, $options) {
+//        $conditions = @$options['conditions'];
+//        if($conditions) {
+//            if(is_string($conditions)) {
+//                $conditions .= ' AND dictioanry_id = '.intval($dictionary_id);
+//            } else if(is_array($conditions)) {
+//                $conditions = array('dictioanry_id' => $dictionary_id);
+//            }
+//            $options['conditions'] = $conditions;
 //
+//        } else {
+//            $options['conditions'] = array('dictioanry_id' => $dictionary_id);
+//        }
+//        return $options;
 //    }
-
-    protected static function add_args_dictionary_id($dictionary_id, $options) {
-        $conditions = @$options['conditions'];
-        if($conditions) {
-            if(is_string($conditions)) {
-                $conditions .= ' AND dictioanry_id = '.intval($dictionary_id);
-            } else if(is_array($conditions)) {
-                $conditions = array('dictioanry_id' => $dictionary_id);
-            }
-            $options['conditions'] = $conditions;
-
-        } else {
-            $options['conditions'] = array('dictioanry_id' => $dictionary_id);
-        }
-        return $options;
-    }
 }

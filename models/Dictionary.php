@@ -21,6 +21,8 @@ class Dictionary extends MLSModel
         array('deployment', 'class_name' => 'DictionaryDeployment')
     );
 
+    static $alias_attribute = array('languages' => 'dictionary_languages');
+
     function remove($force = false) {
         if($force) {
             $this->delete();
@@ -31,19 +33,20 @@ class Dictionary extends MLSModel
     }
 
     function add_language(Language $language){
-        $dictionary_language = $this->create_dictionary_languages(array('language' => $language->getTag()));
-        if($dictionary_language->is_invalid()) MLSException::create($dictionary_language->errors->on('language'));
-        return $dictionary_language;
+        $class_name = ActiveRecord\Inflector::instance()->uncamelize(get_class($this));
+        $created_language = call_user_func(array($this, 'create_'.$class_name.'_languages'), array('language' => $language->getTag()));
+        if($created_language->is_invalid()) MLSException::create($created_language->errors->on('language'));
+        return $created_language;
     }
 
     function get_languages(){
         return array_map(function($lang){
             return $lang->language;
-        }, $this->dictionary_languages);
+        }, $this->read_attribute('languages'));
     }
 
     function remove_language(Language $language, $force = false) {
-        foreach($this->dictionary_languages as $dictionary_language) {
+        foreach($this->read_attribute('languages') as $dictionary_language) {
             if($dictionary_language->language == $language) {
                 $dictionary_language->delete();
             }
@@ -95,7 +98,8 @@ class Dictionary extends MLSModel
      * $create_user: create user ID
      */
     function add_record($params = array(), $create_user = null) {
-        $new_dictionary_record = $this->create_dictionary_records();
+        $class_name = ActiveRecord\Inflector::instance()->uncamelize(get_class($this));
+        $new_dictionary_record = call_user_func(array($this, 'create_'.$class_name.'_records'), array());
         $new_dictionary_record->update_contents($params, $create_user);
         return $new_dictionary_record;
     }
