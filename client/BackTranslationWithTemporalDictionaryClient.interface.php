@@ -26,3 +26,11 @@ interface BackTranslationWithTemporalDictionaryClient {
                                   array/*<Translation>*/ $temporalDict,
                                   Language $dictTargetLang);
 }
+
+class BackTranslationResult
+{
+    // String 中間翻訳結果
+    private $intermediate;
+    // String 折り返し翻訳結果
+    private $target;
+}

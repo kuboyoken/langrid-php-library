@@ -15,7 +15,7 @@ class Morpheme
     // String 品詞（"noun.proper"，"noun.common"，"noun.other"，"noun"，"verb"，"adjective"，"adverb"，"other"，"unknown"のいずれか）
     private $partOfSpeech;
 
-    function __construct(/*String*/ $word, /*String*/ $lemma, /*String*/ $partOfSpeech)
+    function __construct(/*string*/ $word, /*string*/ $lemma, /*string*/ $partOfSpeech)
     {
         $this->setWord($word);
         $this->setLemma($lemma);

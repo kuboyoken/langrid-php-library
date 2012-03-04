@@ -21,8 +21,3 @@ interface BackTranslationClient extends ServiceClient {
                                   $source);
 
 }
-
-//class BackTranslationBackTranslateResult
-//{
-//
-//}

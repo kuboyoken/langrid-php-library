@@ -23,3 +23,11 @@ interface QualityEstimationClient extends ServiceClient {
                              /*String*/ $source,
                              /*String*/ $target);
 }
+
+class EstimationResult
+{
+    // double
+    private $quality;
+    // String
+    private $target;
+}

@@ -16,22 +16,9 @@ class TranslationWithTemporalDictionaryClientTest extends PHPUnit_Framework_Test
     {
         parent::setUp();
         $this->client = ClientFactory::createTranslationWithTemporalDictionaryClient(SERVICE_GRID_BASE_URL.'kyotou.langrid:TranslationCombinedWithBilingualDictionary');
-        $this->client->setUserId('');
-        $this->client->setPassword('');
     }
 
     function testTranslate()
-    {
-        try{
-            $result = $this->client->translate(Language::get('en'), Language::get('ja'), 'internet', array(new Translation('hello', array('こんばんは'))), Language::get('ja'));
-            var_dump($result);
-            $this->assertTrue(mb_strlen($result) > 0);
-        } catch(Exception $e) {
-            var_dump($e->getMessage());
-        }
-    }
-
-    function testTranslate2()
     {
         try{
             $this->client->addBindings(new BindingNode("BilingualDictionaryPL", "KyotoTourismDictionaryDb"));
@@ -45,10 +32,9 @@ class TranslationWithTemporalDictionaryClientTest extends PHPUnit_Framework_Test
                     new Translation('東山３６峰', array('HIGASHIYAMA36HOU'))
                 ),
                 Language::get('en'));
-            var_dump($result);
             $this->assertTrue(mb_strlen($result) > 0);
         } catch(Exception $e) {
-            var_dump($e);
+            $this->assertTrue(false, 'unexpected exception occurere:'.$e->getMessage());
         }
     }
 

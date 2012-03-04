@@ -42,3 +42,23 @@ interface DictionaryClient extends ServiceClient {
      */
     public function getConcept(String $conceptId);
 }
+
+class LemmaNode
+{
+    // String nodeID
+    private $nodeId;
+    // String 言語
+    private $language;
+    // String 見出し。表記
+    private $headWord;
+    // String 見出し。読み
+    private $pronunciation;
+    // String 品詞
+    private $partOfSpeech;
+    // String 分野名。国語辞書での[コンピュータ]等の分野指定に対応
+    private $domain;
+    // Array<String> 語義番号と概念ノードIDの配列((1 C1Je1))...
+    private $conceptNodes;
+    // Array<String> 関係名とノードID(lemma、concept)の配列((関係名 ノードID))...
+    private $relations;
+}

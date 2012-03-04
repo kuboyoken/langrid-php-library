@@ -23,3 +23,15 @@ interface MultihopTranslationClient extends ServiceClient {
                                       Language $targetLang,
                                       /*String*/ $source);
 }
+
+class MultihopTranslationResult
+{
+    // Language 翻訳元の言語
+    private $sourceLang;
+    // Array<Language> 中間言語
+    private $intermediateLangs;
+    // Language 翻訳先の言語
+    private $targetLang;
+    // String 翻訳する文字列
+    private $source;
+}

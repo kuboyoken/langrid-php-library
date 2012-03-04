@@ -33,3 +33,11 @@ interface LanguageIdentificationClient extends ServiceClient {
      */
     public function getSupportedEncodings();
 }
+
+class LanguageAndEncoding
+{
+    // String 言語
+    private $language;
+    // String エンコーディング
+    private $encoding;
+}

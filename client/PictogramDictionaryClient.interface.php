@@ -21,3 +21,13 @@ interface PictogramDictionaryClient extends ServiceClient {
     public function search(Language $language, /*String*/ $word, /*MatchingMethod*/ $matchingMethod);
 
 }
+
+class Pictogram
+{
+    // String 絵文字に関連付けられている単語
+    private $word;
+    // String 絵文字の画像のファイルタイプ
+    private $imageType;
+    // 絵文字の画像データ
+    private $image;
+}
