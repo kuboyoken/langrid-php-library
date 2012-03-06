@@ -19,11 +19,11 @@ ClientFactory::setDefaultUserId('');
 ClientFactory::setDefaultPassword('');
 
 // Settings for LocalServices
-//ActiveRecord\Config::initialize(function($cfg){
-//
-//    $cfg->set_model_directory(dirname(__FILE__).'/models');
-//    $cfg->set_connections(array(
-//            'development' => 'mysql://mlstudio:mlstudio@localhost/mlstudio')
-//    );
-//
-//});
+ActiveRecord\Config::initialize(function($cfg){
+
+   $cfg->set_model_directory(dirname(__FILE__).'/../models');
+   $cfg->set_connections(array(
+           'development' => 'mysql://mlstudio:mlstudio@localhost/mlstudio')
+   );
+
+});
