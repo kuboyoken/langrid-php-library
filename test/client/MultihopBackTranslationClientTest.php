@@ -22,7 +22,6 @@ class MultihopBackTranslationClientTest extends PHPUnit_Framework_TestCase
     {
         try {
             $result = $this->client->multihopBackTranslate(Language::get('ja'), array(Language::get('ko')), Language::get('en'),'いつもありがとうございます。');
-            var_dump($result);
         } catch(Exception $e) {
             $this->assertFalse(true, 'uncaught exception occurred: '.$e->getMessage());
             echo $e->getTraceAsString();

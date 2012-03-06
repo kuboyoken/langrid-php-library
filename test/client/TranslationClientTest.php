@@ -23,7 +23,7 @@ class TranslationClientTest extends PHPUnit_Framework_TestCase
             $result = $this->client->translate(Language::get('en'), Language::get('ja'), 'hello');
             $this->assertEquals('こんにちは', $result);
         } catch(Exception $e) {
-            var_dump($e->getMessage());
+            $this->assertTrue(false, "unexpected exception occurred:".$e->getMessage());
         }
     }
 }

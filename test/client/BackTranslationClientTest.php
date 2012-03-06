@@ -21,15 +21,12 @@ class BackTranslationClientTest extends PHPUnit_Framework_TestCase
     {
         try{
             if(method_exists($this->client, 'backTranslate')) {
-                echo 'hogesgoasje';
                 $result = $this->client->backTranslate(Language::get('en'), Language::get('ja'), 'Hello');
-                var_dump($result);
             } else {
                 $this->assertFalse(true, 'method not found: backTranslate');
             }
         } catch(Exception $e) {
-            var_dump($e->getMessage());
+            $this->assertTrue(false, "unexpected exception occurred:".$e->getMessage());
         }
     }
-
 }

@@ -22,7 +22,6 @@ class LanguageIdentificationClientTest extends PHPUnit_Framework_TestCase
     {
         try {
             $result = $this->client->identifyLanguageAndEncoding('language');
-            var_dump($result);
         } catch(Exception $e) {
             $this->assertFalse(true, 'uncaught exception occurred: '.$e->getMessage());
             echo $e->getTraceAsString();

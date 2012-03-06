@@ -36,7 +36,6 @@ class SpeechRecognitionClientTest extends PHPUnit_Framework_TestCase
     {
         try {
             $result = $this->client->getSupportedVoiceTypes();
-            var_dump($result);
         } catch(Exception $e) {
             $this->assertFalse(true, 'uncaught exception occurred: '.$e->getMessage());
             echo $e->getTraceAsString();
@@ -60,7 +59,6 @@ class SpeechRecognitionClientTest extends PHPUnit_Framework_TestCase
     {
         try {
             $result = $this->client->recognize(Language::get('ja'), new Speech('standard','audio/x-wav', FileUtil::readBase64EncodedData('test/SpeechRecognitionTest.wav')));
-            var_dump($result);
         } catch(Exception $e) {
             $this->assertFalse(true, 'uncaught exception occurred: '.$e->getMessage());
             echo $e->getTraceAsString();
