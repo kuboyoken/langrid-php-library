@@ -39,6 +39,7 @@ class ClientFactory
 {
     private static $defaultUserId;
     private static $defaultPassword;
+    private static $defaultOptions;
 
     public static function createClient($clientClass, $serviceClass, $serviceUrl){
     }
@@ -243,6 +244,20 @@ class ClientFactory
     */
     public static function setDefaultUserId($userId) {
         self::$defaultUserId = $userId;
+    }
+
+    /*
+     * SOAPクライアントのデフォルトオプションを設定する
+     */
+    public static function setDefaultSoapOptions($options = array()) {
+        self::$defaultOptions = $options;
+    }
+
+    /*
+     *　SOAPクライアントのデフォルトオプションを取得する。
+     */
+    public static function getDefaultSoapOptions() {
+        return self::$defaultOptions;
     }
 
     /*

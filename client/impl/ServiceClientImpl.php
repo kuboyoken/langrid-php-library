@@ -112,13 +112,18 @@ abstract class ServiceClientImpl implements ServiceClient
 
     protected function  createStab($url)
     {
-        return new Stab($url, array(
+        $options = array(
             'login' => $this->userId,
             'password' => $this->password,
             'exceptions' => false,
             'trace'=>true,
             'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP,
-        ));
+        );
+        if(ClientFactory::getDefaultSoapOptions()) {
+            $options = array_merge(ClientFactory::getDefaultSoapOptions() , $options);
+        }
+
+        return new Stab($url, $options);
     }
 
     protected function _setUpSoapHeader($stab)
