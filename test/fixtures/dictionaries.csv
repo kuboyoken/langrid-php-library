@@ -8,3 +8,4 @@ id, name, licenser, dictionary_records_count, created_by, updated_by, user_read,
 7, "e test_update_languages", "", 0, 1, 1, 1, 1, 1, 1, 0
 8, "f test_update_languages_force", "", 0, 1, 1, 1, 1, 1, 1, 0
 9, "g test_dict_deleted", "", 0, 1, 1, 1, 1, 1, 1, 1
+10, "h test_dict_deleted", "", 0, 1, 1, 1, 1, 1, 1, 1

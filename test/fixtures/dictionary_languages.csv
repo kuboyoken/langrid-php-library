@@ -20,3 +20,6 @@ id, dictionary_id, language
 19, 8, "ja"
 20, 8, "ko"
 21, 8, "zh"
+22, 10, "en"
+23, 10, "ja"
+24, 10, "ko"

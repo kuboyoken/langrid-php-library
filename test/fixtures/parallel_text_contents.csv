@@ -47,3 +47,6 @@ id, parallel_text_record_id, language, text, created_by
 46, 18, "en", "hoge", 1
 47, 18, "ko", "hoge", 1
 48, 18, "zh", "hoge", 1
+49, 19, "en", "hoge", 1
+50, 19, "ja", "hoge", 1
+51, 19, "ko", "hoge", 1

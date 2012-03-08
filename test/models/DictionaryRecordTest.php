@@ -122,4 +122,12 @@ class DictionaryRecordTest extends PHPUnit_Framework_TestCase
             $this->assertTrue(false, 'unexpected exception occured'.$e->getMessage());
         }
     }
+
+    public function testCascadeDelete() {
+        $beforeCount = DictionaryContent::count();
+        $record = DictionaryRecord::find(17);
+        $record->delete();
+        $afterCount = DictionaryContent::count();
+        $this->assertTrue($beforeCount - 3 == $afterCount);
+    }
 }

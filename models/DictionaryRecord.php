@@ -25,6 +25,8 @@ class DictionaryRecord extends MLSModel
 
     static $alias_attribute = array('contents' => 'dictionary_contents');
 
+    static $after_destroy = array('delete_all_contents');
+
     static protected function get_resource_name(){
         $underscorecase = ActiveRecord\Inflector::instance()->uncamelize(get_called_class());
         return str_replace('_record', '', $underscorecase);
@@ -89,6 +91,13 @@ class DictionaryRecord extends MLSModel
             $result[$content->language] = $content;
         }
         return $result;
+    }
+
+    public function delete_all_contents() {
+        $className = str_replace('Record', '', get_called_class());
+        call_user_func( $className.'Content::delete_all', array(
+            'conditions' => array(self::get_resource_name().'_record_id' => $this->read_attribute('id'))
+        ));
     }
 
     /*

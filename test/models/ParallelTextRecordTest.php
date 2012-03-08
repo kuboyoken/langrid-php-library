@@ -125,5 +125,13 @@ class ParallelTextRecordTest extends PHPUnit_Framework_TestCase
             $this->assertTrue(false, 'unexpected exception occured'.$e->getMessage());
         }
     }
+
+    public function testCascadeDelete() {
+        $beforeCount = ParallelTextContent::count();
+        $record = ParallelTextRecord::find(19);
+        $record->delete();
+        $afterCount = ParallelTextContent::count();
+        $this->assertTrue($beforeCount - 3 == $afterCount);
+    }
 }
 

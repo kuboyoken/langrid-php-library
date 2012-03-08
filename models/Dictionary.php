@@ -24,8 +24,22 @@ class Dictionary extends MLSModel
 
     static $alias_attribute = array('languages' => 'dictionary_languages', 'deployment' => 'dictionary_deployment');
 
+    static $after_destroy = array('delete_related_datas');
+
     static protected function get_resource_name(){
         return ActiveRecord\Inflector::instance()->uncamelize(get_called_class());
+    }
+
+    function delete_related_datas() {
+        call_user_func( get_class($this).'Language::delete_all', array(
+            'conditions' => array(self::get_resource_name().'_id' => $this->read_attribute('id'))
+        ));
+        call_user_func( get_class($this).'Deployment::delete_all', array(
+            'conditions' => array(self::get_resource_name().'_id' => $this->read_attribute('id'))
+        ));
+        call_user_func( get_class($this).'Record::delete_all', array(
+            'conditions' => array(self::get_resource_name().'_id' => $this->read_attribute('id'))
+        ));
     }
 
     function remove($force = false) {
