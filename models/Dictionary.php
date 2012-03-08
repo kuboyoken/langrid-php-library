@@ -116,8 +116,8 @@ class Dictionary extends MLSModel
 
     function get_records(/* ... */) {
         $options = static::extract_and_validate_options(func_get_args());
-        if(!@$options['limit']) $options['limit'] = 2;
-        if(!@$options['offset']) $options['offset'] = 3;
+        if(!@$options['limit']) $options['limit'] = 10;
+        if(!@$options['offset']) $options['offset'] = 0;
         return call_user_func_array( get_class($this).'Record::find_all_by_'.self::get_resource_name().'_id', array($this->id, $options));
     }
 
@@ -245,13 +245,13 @@ class Dictionary extends MLSModel
 
     protected static function add_args_delete_flag_off($options) {
         $options = static::extract_and_validate_options($options);
-
         $conditions = @$options['conditions'];
         if($conditions) {
             if(is_string($conditions)) {
                 $conditions .= ' AND delete_flag = 0';
             } else if(is_array($conditions)) {
-                $conditions = array('delete_flag' => 0);
+                $conditions['delete_flag'] = 0;
+
             }
             $options['conditions'] = $conditions;
 

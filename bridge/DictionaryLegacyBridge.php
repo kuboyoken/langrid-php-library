@@ -56,26 +56,19 @@ class DictionaryLegacyBridge
 
         // 更新分
         $result &= $dict->update_languages($params['valueToSave'][0], true);
-
-        foreach(array_slice($params['valueToSave'], 1) as $record) {
-            $hash = array();
-            $i = 0;
-            foreach($params['valueToSave'][0] as $lang) {
-                $hash[$lang] = $record[$i++];
+        unset($params['valueToSave'][0]);
+        foreach($params['valueToSave'] as $recordId => $record) {
+            $dictrecord = DictionaryRecord::find($recordId);
+            if($dictrecord) {
+                $dictrecord->update_contents($record);
             }
-            $dict->add_record($hash);
         }
 
 
         // 新規追加分
         if(@$params['newRecord']) {
             foreach($params['newRecord'] as $record) {
-                $hash = array();
-                $i = 0;
-                foreach($params['valueToSave'][0] as $lang) {
-                    $hash[$lang] = $record[$i++];
-                }
-                $dict->add_record($hash);
+                $dict->add_record($record);
             }
         }
 
@@ -118,10 +111,10 @@ class DictionaryLegacyBridge
 
         $lines = array();
         $languages = $dict->get_languages();
-        $lines[] = implode('\t', $languages);
+        $lines[] = implode("\t", $languages);
         foreach($dict->dictionary_records as $record) {
             $row = $record->get_contents_as_ordered_array($languages);
-            $lines[] = implode('\t', $row);
+            $lines[] = implode("\t", $row);
         }
 
         $output = implode(PHP_EOL, $lines);
@@ -275,18 +268,25 @@ HTML;
     static public function getAllDictionariesByTypeId($typeId, $limit = 10, $offset = 0, $userId = '') {
         $resources = array();
         if($typeId == self::TYPE_ID_DICTIONARY) {
-            $resources = Dictionary::all();
+            $resources = Dictionary::all(array(
+                'offset' => $offset, 'limit' => $limit
+            ));
         }
 
         $results = array();
         foreach($resources as $dict) {
             $results[] = array(
+			    'id' => $dict->id,
+                'name' => $dict->name,
+                'count' => $dict->records_count(),
                 'supportedLanguages' => $dict->get_languages(),
-                'createDateFormat' => formatTimestamp($dict->created_at, 'Y/m/d H:i'),
-                'updateDateFormat' => formatTimestamp($dict->updated_at, 'Y/m/d H:i'),
-                'view' => $dict->can_read($userId),
-                'edit' => $dict->can_write($userId),
+                'languages' => $dict->get_languages(),
+                'createDateFormat' => $dict->created_at->format('Y/m/d H:i'),
+                'updateDateFormat' => $dict->updated_at ? $dict->updated_at->format('Y/m/d H:i') : '',
+                'view' => $dict->can_view($userId),
+                'edit' => $dict->can_edit($userId),
                 'deployFlag' => $dict->is_deploy(),
+                "deploy_flag" => $dict->is_deploy(),
                 'delete' => $dict->is_owner($userId)
             );
         }
@@ -313,10 +313,17 @@ HTML;
 
         $langHash = array("row" => "0");
         foreach($langs as $l) $langHash[$l] = $l;
-
         $results = array($langHash);
 
-        foreach($dict->dictionary_records as $record) {
+        $records = DictionaryRecord::all(array(
+            'conditions' => array(
+                'dictionary_id' => intval($dictionaryId)
+             ),
+            'offset' => $offset,
+            'limit' => $limit
+        ));
+
+        foreach($records as $record) {
             $tmprow = $record->get_contents();
             $tmprow['row'] = $record->id;
             $results[] = $tmprow;
@@ -369,6 +376,11 @@ HTML;
         return $dict->can_read($userId);
     }
 
+    static public function canDelete($dictionaryId, $userId) {
+        $dict = Dictionary::find($dictionaryId);
+        return $dict->is_owner($userId);
+    }
+
     static public function getDictionary($dictionaryId) {
         $dict = Dictionary::first(array('conditions' => array('dictionary_id' => intval($dictionaryId))));
         if($dict) {
@@ -384,8 +396,13 @@ HTML;
     }
 
     static public function countAllDictionaryContentsByDictionaryId($dictionaryId) {
-        $dict = Dictionary::first(array('conditions' => array('dictionary_id' => intval($dictionaryId))));
-        return $dict ? $dict->records_count() : 0;
+        $dict = Dictionary::first(array('conditions' => array('id' => intval($dictionaryId))));
+        return $dict ? intval($dict->records_count()) : 0;
+    }
+
+    static public function removeDictionary($dictionaryId) {
+        $dict = Dictionary::find($dictionaryId);
+        $dict->remove();
     }
 
     static private function escape($str) {
@@ -402,4 +419,5 @@ HTML;
         }
         return $fileName.'.txt';
     }
+
 }
