@@ -277,12 +277,17 @@ HTML;
         foreach($resources as $dict) {
             $results[] = array(
 			    'id' => $dict->id,
+                'userId' => $dict->created_by,
+                'uid' => $dict->created_by,
+                'userName' => $dict->created_by,
+                'typeId' => $typeId,
                 'name' => $dict->name,
                 'count' => $dict->records_count(),
                 'supportedLanguages' => $dict->get_languages(),
-                'languages' => $dict->get_languages(),
+                'languages' => implode(',', $dict->get_languages()),
                 'createDateFormat' => $dict->created_at->format('Y/m/d H:i'),
                 'updateDateFormat' => $dict->updated_at ? $dict->updated_at->format('Y/m/d H:i') : '',
+                'permission_type' => $dict->update_attributes('any_read') == 1 ? 'all' : 'user',
                 'view' => $dict->can_view($userId),
                 'edit' => $dict->can_edit($userId),
                 'deployFlag' => $dict->is_deploy(),
@@ -382,13 +387,13 @@ HTML;
     }
 
     static public function getDictionary($dictionaryId) {
-        $dict = Dictionary::first(array('conditions' => array('dictionary_id' => intval($dictionaryId))));
+        $dict = Dictionary::first(array('conditions' => array('id' => intval($dictionaryId))));
         if($dict) {
             return array(
                 'dictionary_name' => $dict->name,
                 'type_id' => self::TYPE_ID_DICTIONARY,
                 'deploy_flag' => $dict->is_deploy(),
-                'update_date' => $dict->updated_at
+                'update_date' => $dict->updated_at->getTimestamp().''
             );
         } else {
             return array();
