@@ -1808,7 +1808,7 @@ $record->delete();</pre>
 							<th class="name">メソッド名</th>
 							<th class="parameter">引数</th>
 							<th class="return">返り値</th>
-							<th class="discription">説明</th>
+							<th class="description">説明</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -1946,7 +1946,7 @@ $record->delete();</pre>
 							<th class="name">メソッド名</th>
 							<th class="parameter">引数</th>
 							<th class="return">返り値</th>
-							<th class="discription">説明</th>
+							<th class="description">説明</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -2065,7 +2065,7 @@ $record->delete();</pre>
 							<th class="name">メソッド名</th>
 							<th class="parameter">引数</th>
 							<th class="return">返り値</th>
-							<th class="discription">説明</th>
+							<th class="description">説明</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -2077,23 +2077,48 @@ $record->delete();</pre>
 						</tr>
 						<tr>
 							<td>get_contents</td>
-							<td></td>
-							<td></td>
-							<td></td>
+							<td>・(Boolean) withAllProperty [= false]: コンテンツのデータ形式</td>
+							<td>(array) コンテンツのハッシュ形式配列</td>
+							<td>
+								レコードに含まれるコンテンツを取得する。<br>
+								withAllPropertyがfalseの場合(デフォルト)、{$languageCode => $content} という形式で返す。<br>
+								[例]<br>
+								<code>array('ja' => 'こんにちは', 'en' => 'Hello')</code><br>
+								withAllPropertyがtrueの場合、{'language code' => {$propertyName => $propertyValue} } という形式で返す。<br>
+								[例]<br>
+								<code>array(
+									'ja' => array('text' => 'こんにちは', 'created_at' => '2012-03-10 16:44:46'), 
+									'en' => array('text' => 'Hello', 'created_by' => '0000001'
+								)</code>
+							</td>
 						</tr>
 						<tr>
 							<td>get_contents_as_ordered_array</td>
-							<td></td>
-							<td></td>
-							<td></td>
+							<td>・(array) languageOrder: 言語の配列</td>
+							<td>(array) コンテンツの配列</td>
+							<td>
+								指定された言語に対するコンテンツを指定の順序で取得する。
+								指定言語のデータが存在しない場合、空文字列として返す。
+								array('ja', 'en', 'ko')を引数とした場合、戻り値はarray('jaのコンテンツ', 'enのコンテンツ', 'koのコンテンツ')が戻る。
+								カンマ区切りデータにしたい等の際に利用する。
+							</td>
 						</tr>
 						<tr>
 							<td>update_contents</td>
-							<td></td>
-							<td></td>
-							<td></td>
+							<td>
+								・(array) params: 更新データ<br>
+								・(String) update_user [= '']: 更新ユーザー</td>
+							<td>(DictionaryRecord) 更新したレコード</td>
+							<td>
+								辞書レコードを更新する。
+								paramsは {$languageCode => $contentText} の形式で指定する <br>
+								[例]
+								<code>$reocrd->update_contents(array('ja' => '大阪', 'en' => 'Osaka'));</code>
+
+							</td>
 						</tr>
 					</tbody>
+
 				</table>
 				<table class="referrence">
 					<caption>クラスメソッド</caption>
@@ -2102,15 +2127,69 @@ $record->delete();</pre>
 							<th class="name">メソッド名</th>
 							<th class="parameter">引数</th>
 							<th class="return">返り値</th>
-							<th class="discription">説明</th>
+							<th class="description">説明</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr>
-							<td>remove</td>
-							<td>・(Boolean)force [= false]: 論理削除 or 物理削除</td>
-							<td>void</td>
-							<td>data</td>
+							<td>first</td>
+							<td>・(array) options [= array()]: 検索条件</td>
+							<td>(DictionaryRecord) 辞書レコード</td>
+							<td>
+								検索条件に一致する辞書の最初の１件を取得する。
+								検索条件は<a href="#common_conditions">後述
+							</td>
+						</tr>
+						<tr>
+							<td>last</td>
+							<td>・(array) options [= array()]: 検索条件</td>
+							<td>(DictionaryRecord) 辞書レコード</td>
+							<td>
+								検索条件に一致する辞書の最後の１件を取得する。
+								検索条件は<a href="#common_conditions">後述
+							</td>
+						</tr>
+						<tr>
+							<td>all</td>
+							<td>・(array) options [= array()]: 検索条件</td>
+							<td>(DictionaryRecord[]) 辞書レコードリスト</td>
+							<td>
+								検索条件に一致する辞書を全件取得する。
+								検索条件は<a href="#common_conditions">後述
+							</td>
+						</tr>
+						<tr>
+							<td>count</td>
+							<td>・(array) options [= array()]: 検索条件</td>
+							<td>(DictionaryRecord) 辞書レコード</td>
+							<td>
+								検索条件に一致する辞書の件数を取得する。
+								検索条件は<a href="#common_conditions">後述
+							</td>
+						</tr>
+						<tr>
+							<td>count_by_resource_id_and_language</td>
+							<td>
+								・(Integer) resource_id: カウント対象の辞書のID
+								・(Language) languageCode: カウント対象の言語コード
+							</td>
+							<td>(Integer) 件数</td>
+							<td>指定の辞書に含まれる指定言語の登録件数を取得する。</td>
+						</tr>
+						<tr>
+							<td>count_by_resource_id_each_languages</td>
+							<td>・(Integer) resource_id: カウント対象の辞書のID</td>
+							<td>(array) 言語別の登録数</td>
+							<td>指定の辞書に含まれる言語別の登録件数を取得する。</td>
+						</tr>
+						<tr>
+							<td>create_record</td>
+							<td>
+								・(Integer) resource_id: レコードを追加する対象辞書のID<br>
+								・(array) params [= array()]: 追加データ<br>
+								・(String) create_user [= '']: 追加するユーザーのID</td>
+							<td>(DictionaryRecord) 追加したレコード</td>
+							<td>指定の辞書に新規レコードを追加する</td>
 						</tr>
 					</tbody>
 				</table>

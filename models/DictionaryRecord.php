@@ -32,6 +32,10 @@ class DictionaryRecord extends MLSModel
         return str_replace('_record', '', $underscorecase);
     }
 
+    public function remove() {
+        return $this->delete();
+    }
+
     public function get_contents($withAllProperty = false) {
         $result = array();
         foreach($this->read_attribute('contents') as $content) {
