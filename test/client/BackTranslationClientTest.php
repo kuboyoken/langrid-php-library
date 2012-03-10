@@ -20,11 +20,10 @@ class BackTranslationClientTest extends PHPUnit_Framework_TestCase
     function testBackTranslate()
     {
         try{
-            if(method_exists($this->client, 'backTranslate')) {
-                $result = $this->client->backTranslate(Language::get('en'), Language::get('ja'), 'Hello');
-            } else {
-                $this->assertFalse(true, 'method not found: backTranslate');
-            }
+            $this->client->addBindings(new BindingNode("ForwardTranslationPL", "GoogleTranslate"));
+            $this->client->addBindings(new BindingNode("BackwardTranslationPL", "GoogleTranslate"));
+            $result = $this->client->backTranslate(Language::get('ja'), Language::get('en'), '古く京都は、しばしば中国王朝の都となった洛陽に因み、京洛、洛中、洛陽などといわれた。');
+            $this->assertEquals($result->target, "洛陽に京都、因Miは中国王朝の首都となり、多くの場合、首都、洛陽、そのような長い時間の中で、京楽を言われました。");
         } catch(Exception $e) {
             $this->assertTrue(false, "unexpected exception occurred:".$e->getMessage());
         }

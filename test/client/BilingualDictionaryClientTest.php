@@ -14,14 +14,14 @@ class BilingualDictionaryClientTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->client = ClientFactory::createBilingualDictionaryClient(SERVICE_GRID_BASE_URL.'kyotou.langrid:NaturalDisasters');
+        $this->client = ClientFactory::createBilingualDictionaryClient(SERVICE_GRID_BASE_URL.'kyotou.langrid:Lsd');
     }
 
     function testGetSupportedLanguagePairs()
     {
         try {
             $result = $this->client->getSupportedLanguagePairs();
-            $this->assertTrue(40 == count($result));
+            $this->assertTrue(count($result) == 2);
         } catch(Exception $e) {
             $this->assertFalse(true, 'uncaught exception occurred: '.$e->getMessage());
             echo $e->getTraceAsString();
@@ -57,9 +57,11 @@ class BilingualDictionaryClientTest extends PHPUnit_Framework_TestCase
     {
         try {
             //$headLang, $targetLang, $headWord, $matchingMethod
-            $result = $this->client->search(Language::get('en'), Language::get('ja'), 'earthquake', MatchingMethod::COMPLETE);
+            $result = $this->client->search(Language::get('ja'), Language::get('en'), '科学', MatchingMethod::COMPLETE);
+            var_dump($result);
             $this->assertTrue(1 == count($result));
-            $this->assertEquals('地震', $result[0]->targetWords[0]);
+            $this->assertEquals('science', $result[0]->targetWords[0]);
+            $this->assertEquals('sci', $result[0]->targetWords[1]);
         } catch(Exception $e) {
             $this->assertFalse(true, 'uncaught exception occurred: '.$e->getMessage());
             echo $e->getTraceAsString();

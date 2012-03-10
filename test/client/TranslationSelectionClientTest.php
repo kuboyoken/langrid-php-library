@@ -21,8 +21,8 @@ class TranslationSelectionClientTest extends PHPUnit_Framework_TestCase
     function testTranslate()
     {
         try{
-            $result = $this->client->translate(Language::get('en'), Language::get('ja'), 'hello');
-            $this->assertEquals('こんにちは', $result);
+            $result = $this->client->translate(Language::get('ja'), Language::get('en'), '今日はいい天気ですね');
+            $this->assertEquals('It is fine today', $result);
         } catch(Exception $e) {
             $this->assertTrue(false, "unexpected exception occurred:".$e->getMessage());
         }

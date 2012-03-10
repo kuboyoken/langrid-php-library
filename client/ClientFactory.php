@@ -92,7 +92,7 @@ class ClientFactory
      * 概念辞書サービス用のクライアントを作成する。
      */
     public static function createConceptDictionaryClient($url){
-        return self::setup(new ConcptDictionaryClientImpl($url));
+        return self::setup(new ConceptDictionaryClientImpl($url));
     }
 
     /*

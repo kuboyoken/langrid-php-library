@@ -95,7 +95,6 @@ abstract class ServiceClientImpl implements ServiceClient
                 $this->url, $methodName, $arguments
             );
         }
-
         $this->_setUpSoapHeader($stab);
         $result = call_user_func_array(array($stab, $methodName), $arguments);
         $headers = $stab->getResponseHeadersAsArray();
