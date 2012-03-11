@@ -1776,7 +1776,7 @@ $dictionary->add_language(Language::get('vi'));</pre>
 // 辞書IDを条件に辞書オブジェクトを取得
 $dictionary = Dictionary::find(3);
 // 辞書へのレコード追加
-$dictionary->add_record({'ja' => '京都', 'en' => 'Kyoto', 'zh' => '京都'});</pre>
+$dictionary->add_record(array('ja' => '京都', 'en' => 'Kyoto', 'zh' => '京都'));</pre>
 				</p>
 				<p>
 					<b>辞書コンテンツの更新</b>
