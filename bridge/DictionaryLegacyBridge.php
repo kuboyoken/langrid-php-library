@@ -287,7 +287,7 @@ HTML;
                 'languages' => implode(',', $dict->get_languages()),
                 'createDateFormat' => $dict->created_at->format('Y/m/d H:i'),
                 'updateDateFormat' => $dict->updated_at ? $dict->updated_at->format('Y/m/d H:i') : '',
-                'permission_type' => $dict->update_attributes('any_read') == 1 ? 'all' : 'user',
+//                'permission_type' => $dict->update_attributes('any_read') == 1 ? 'all' : 'user',
                 'view' => $dict->can_view($userId),
                 'edit' => $dict->can_edit($userId),
                 'deployFlag' => $dict->is_deploy(),
@@ -378,7 +378,7 @@ HTML;
 
     static public function canLoad($dictionaryId, $userId) {
         $dict = Dictionary::find($dictionaryId);
-        return $dict->can_read($userId);
+        return $dict->can_view($userId);
     }
 
     static public function canDelete($dictionaryId, $userId) {
