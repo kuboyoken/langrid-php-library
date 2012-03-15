@@ -130,7 +130,7 @@ class DictionaryLegacyBridge
     /*
      * use instead of UserDictionaryController::doUpload
      */
-    static public function doUpload($tmpFilePath, $typeId, $name, $editPermission, $readPermission, $mimeType) {
+    static public function doUpload($tmpFilePath, $typeId, $name, $editPermission, $readPermission, $mimeType, $userId) {
         $tmpFileLines = file($tmpFilePath);
         $code = mb_detect_encoding($tmpFileLines[0]);
 
@@ -196,7 +196,7 @@ class DictionaryLegacyBridge
             'supportedLanguages' => $dictTable[0],
             'dictionaryTypeId' => $typeId,
             'records' => array_slice($dictTable, 1)
-        ));
+        ), $userId);
 
         if (strtoupper($response['status']) == 'ERROR') {
             return self::_doUploadErrorResponse($response['message']);
