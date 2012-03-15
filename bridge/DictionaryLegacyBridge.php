@@ -329,7 +329,11 @@ HTML;
         ));
 
         foreach($records as $record) {
-            $tmprow = $record->get_contents();
+            $tmprow = array();
+            foreach($langs as $lang) {
+                $tmprow[$lang] = "";
+            }
+            $tmprow = array_merge($tmprow, $record->get_contents());
             $tmprow['row'] = $record->id;
             $results[] = $tmprow;
         }
