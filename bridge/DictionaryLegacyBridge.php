@@ -68,7 +68,9 @@ class DictionaryLegacyBridge
         // 新規追加分
         if(@$params['newRecord']) {
             foreach($params['newRecord'] as $record) {
-                $dict->add_record($record);
+                if(! self::_isAllEmptyRow($record)) {
+                    $dict->add_record($record);
+                }
             }
         }
 
@@ -100,6 +102,15 @@ class DictionaryLegacyBridge
 
         return (boolean)$result;
 
+    }
+    
+    static private function _isAllEmptyRow($rows) {
+        foreach($rows as $row) {
+            if(! empty($row)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /*
