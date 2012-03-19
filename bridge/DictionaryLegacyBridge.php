@@ -28,6 +28,8 @@ class DictionaryLegacyBridge
                 'records' => $params['records']
             ), $userId);
         }
+        
+        self::_setPermission($dict, $params);
 
         if(@$params['deployFlag'] && $params['deployFlag'] === true) {
             $dict->deploy();
@@ -78,15 +80,7 @@ class DictionaryLegacyBridge
             }
         }
 
-        if(@$params['editPermission'] && $params['editPermission'] == 'all') {
-            $dict->update_attributes(array(
-                'any_read' => true, 'any_write' => true
-            ));
-        } else if(@$params['viewPermission'] && $params['viewPermission'] == 'all') {
-            $dict->update_attributes(array(
-                'any_read' => true, 'any_write' => false
-            ));
-        }
+        self::_setPermission($dict, $params);
 
 //        $dictionary = $this->getDictionary($dictionaryId);
 //        // call user hook function
@@ -115,6 +109,22 @@ class DictionaryLegacyBridge
             }
         }
         return true;
+    }
+    
+    static private function _setPermission($dict, $params) {
+        if(@$params['editPermission'] && $params['editPermission'] == 'all') {
+            $dict->update_attributes(array(
+                'any_read' => true, 'any_write' => true
+            ));
+        } else if(@$params['viewPermission'] && $params['viewPermission'] == 'all') {
+            $dict->update_attributes(array(
+                'any_read' => true, 'any_write' => false
+            ));
+        } else {
+            $dict->update_attributes(array(
+                'any_read' => false, 'any_write' => false
+            ));
+        }
     }
 
     /*
@@ -291,7 +301,7 @@ HTML;
         $results = array();
         foreach($resources as $dict) {
             $results[] = array(
-			    'id' => $dict->id,
+                'id' => $dict->id,
                 'userId' => $dict->created_by,
                 'uid' => $dict->created_by,
                 'userName' => $dict->created_by,
