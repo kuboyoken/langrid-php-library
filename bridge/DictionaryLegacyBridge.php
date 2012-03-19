@@ -120,7 +120,7 @@ class DictionaryLegacyBridge
             $dict->update_attributes(array(
                 'any_read' => true, 'any_write' => false
             ));
-        } else {
+        } else if(@$params['viewPermission'] && $params['viewPermission'] == 'user') {
             $dict->update_attributes(array(
                 'any_read' => false, 'any_write' => false
             ));
