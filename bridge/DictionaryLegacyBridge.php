@@ -60,7 +60,11 @@ class DictionaryLegacyBridge
         foreach($params['valueToSave'] as $recordId => $record) {
             $dictrecord = DictionaryRecord::find($recordId);
             if($dictrecord) {
-                $dictrecord->update_contents($record);
+                if(! self::_isAllEmptyRow($record)) {
+                    $dictrecord->update_contents($record);
+                } else {
+                    $dictrecord->remove();
+                }
             }
         }
 
