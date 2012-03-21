@@ -12,7 +12,7 @@ class Language
     private $name;
 
     function Language($tag, $name) {
-        $this->tag = strtolower($tag);
+        $this->tag = $tag;
         $this->name = $name;
     }
 
@@ -43,7 +43,7 @@ class Language
         if(!self::$languages) {
             self::createLanguageMapper();
         }
-        return @self::$languages[strtolower($tag)];
+        return @self::$languages[($tag)];
     }
 
     private static function createLanguageMapper() {
