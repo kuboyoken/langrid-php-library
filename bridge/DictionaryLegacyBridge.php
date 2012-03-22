@@ -157,7 +157,6 @@ class DictionaryLegacyBridge
      */
     static public function doUpload($tmpFilePath, $typeId, $name, $editPermission, $readPermission, $mimeType, $userId) {
         $tmpFileLines = file($tmpFilePath);
-        $code = mb_detect_encoding($tmpFileLines[0]);
 
         if (ord($tmpFileLines[0]{0}) == 255 && ord($tmpFileLines[0]{1}) == 254) {
             $code = "UTF-16LE";
@@ -186,7 +185,11 @@ class DictionaryLegacyBridge
         fwrite($temp, $utf8content);
         fseek($temp, 0);
         while (($cells = fgets($temp, 10240)) !== false) {			// chr(0x09) == \t
-            $lines[] = explode("\t", preg_replace("(\\r|\\n)", "", $cells));
+            $cells = explode("\t", preg_replace("(\\r|\\n)", "", $cells));
+            foreach ($cells as $cell) {
+                iconv("UTF-8", "UTF-8", $cell); // validate for can be json_encode
+            }
+            $lines[] = $cells;
         }
         fclose($temp);
 
