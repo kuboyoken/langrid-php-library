@@ -185,8 +185,8 @@ class DictionaryLegacyBridge
         $temp = fopen('php://memory', 'rw');
         fwrite($temp, $utf8content);
         fseek($temp, 0);
-        while (($cells = fgetcsv($temp, 10240, chr(0x09))) !== false) {			// chr(0x09) == \t
-            $lines[] = $cells;
+        while (($cells = fgets($temp, 10240)) !== false) {			// chr(0x09) == \t
+            $lines[] = explode("\t", preg_replace("(\\r|\\n)", "", $cells));
         }
         fclose($temp);
 
