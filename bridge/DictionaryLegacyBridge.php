@@ -184,13 +184,20 @@ class DictionaryLegacyBridge
         $temp = fopen('php://memory', 'rw');
         fwrite($temp, $utf8content);
         fseek($temp, 0);
-        while (($cells = fgets($temp, 10240)) !== false) {			// chr(0x09) == \t
-            $cells = explode("\t", preg_replace("(\\r|\\n)", "", $cells));
-            foreach ($cells as $cell) {
-                iconv("UTF-8", "UTF-8", $cell); // validate for can be json_encode
+        set_error_handler("DictionaryLegacyBridge::error_handler");
+        try {
+            while (($cells = fgets($temp, 10240)) !== false) {			// chr(0x09) == \t
+                $cells = explode("\t", preg_replace("(\\r|\\n)", "", $cells));
+                foreach ($cells as $cell) {
+                    iconv("UTF-8", "UTF-8", $cell); // validate for can be json_encode
+                }
+                $lines[] = $cells;
             }
-            $lines[] = $cells;
+        } catch (Exception $e) {
+            $error = _MI_DICTIONARY_ERROR_FILE_FORMAT_INVALID;
+            return self::_doUploadErrorResponse($error);
         }
+        restore_error_handler("DictionaryLegacyBridge::error_handler");
         fclose($temp);
 
         $validColNums = false;
@@ -456,5 +463,11 @@ HTML;
         }
         return $fileName.'.txt';
     }
-
+    
+    static public function error_handler($errno, $errstr) {
+        switch ($errno) {
+            case E_NOTICE:
+                throw new Exception("mistake casting charset with iconv");
+        }
+    }
 }
